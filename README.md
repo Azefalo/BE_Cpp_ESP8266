@@ -45,6 +45,7 @@ Voici un exemple de la classe pour le capteur de luminosité (CapteurLuminosite)
 
 
 ## Prototype de code
+```
 class Capteur {
 protected:
     int id;
@@ -74,6 +75,7 @@ public:
         Serial.println(valeurLuminosite);
     }
 };
+```
 
 ## Scénario d’Utilisation
 Initialisation : Les capteurs et actionneurs sont configurés.
