@@ -1,4 +1,4 @@
-# BE_POO_ESP8266
+# BE_Cpp_ESP8266
 # Projet : Système Intégré de Contrôle et d’Alerte pour Pièce de Vie
 
 ## Idée du Projet
