@@ -3,6 +3,8 @@
 #include "Application.h"
 #include <ESP8266WiFi.h> // Inclure la bibliothèque ESP8266WiFi
 
+// Pierre est le meilleur
+
 Application myApplication;
 
 const int brocheLED = LED_BUILTIN_AUX;   // Broche du LED Auxiliaire intégré de l'ESP8266
