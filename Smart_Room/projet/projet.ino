@@ -48,14 +48,15 @@ void setup() {
   // Initialisation de la communication série pour afficher les messages
   Serial.begin(9600);
 
-  // Création d'un objet Led avec la pin 13 (souvent la LED intégrée sur les cartes Arduino)
-  Led led(LED_BUILTIN);
 
-  // Initialisation de la LED
-  led.init();
 }
 
 void loop() {
+    // Création d'un objet Led avec la pin 13 (souvent la LED intégrée sur les cartes Arduino)
+  Led led(D4);
+
+  // Initialisation de la LED
+  led.init();
   // Allumage de la LED pendant 1 seconde
   led.on();
   delay(1000);  // Attendre 1 seconde
