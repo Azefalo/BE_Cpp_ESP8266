@@ -1,0 +1,9 @@
+A0		Sound sensor
+I2C		Temperature and humidity sensor
+I2C
+D3		Ultrassonic sensor
+D5		LED
+D6		Button
+UART0
+D8		Servo moteur
+D7		Touch button
