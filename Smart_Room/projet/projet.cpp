@@ -1,17 +1,51 @@
+//#include"projet.h"
+#include <Arduino.h>
+//class Capteur {
+//protected:
+//    int id;
+//    String type;
+//
+//public:
+//    Capteur(int id, String type){
+//    this->id=id;
+//    this->type=type;
+//    } 
+//    virtual float mesurer() = 0; // Méthode virtuelle pure pour mesurer
+//    //virtual void afficherValeur() = 0; // Pour afficher la valeur sur l'écran
+//};
 
-class Capteur {
-protected:
-    int id;
-    String type;
-
-public:
-    Capteur(int id, String type){
-    this->id=id;
-    this->type=type;
-    } 
-    virtual float mesurer() = 0; // Méthode virtuelle pure pour mesurer
-    //virtual void afficherValeur() = 0; // Pour afficher la valeur sur l'écran
+class Actuator{ // définition de la classe actionneur
+  protected : byte pin;
+  
+  public :
+  Actuator(byte pin){
+  this->pin=pin;
+  }
+  void init(){
+  pinMode(pin,OUTPUT);
+  }
 };
+
+class Led: public Actuator{
+  private: byte pin;
+  
+  public : 
+  
+  Led(byte pin):Actuator(pin){
+  }
+  void init(){
+  Actuator::init();
+  }
+  void on(){
+  digitalWrite(pin,HIGH);
+  }
+  void off(){
+  digitalWrite(pin,LOW);
+  }
+  
+};
+
+
 
 //class CapteurLuminosite : public Capteur {
 //private:
@@ -31,13 +65,3 @@ public:
 //        Serial.println(valeurLuminosite);
 //    }
 //};
-
-void setup() {
-  // put your setup code here, to run once:
-
-}
-
-void loop() {
-  // put your main code here, to run repeatedly:
-
-}
