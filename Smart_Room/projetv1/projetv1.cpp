@@ -1,8 +1,7 @@
 #include"projetv1.hpp"
 
 // Constructeur de la classe Actuator
-Actuator::Actuator(byte pin) {
-    this->pin = pin;
+Actuator::Actuator(byte pin):pin(pin){
 }
 
 // Méthode d'initialisation de la pin en mode OUTPUT
