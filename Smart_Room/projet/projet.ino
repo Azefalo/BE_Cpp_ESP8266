@@ -52,16 +52,16 @@ void setup() {
 }
 
 void loop() {
-    // Création d'un objet Led avec la pin 13 (souvent la LED intégrée sur les cartes Arduino)
-  Led led(D4);
+    // Création d'un objet Led avec la pin 16(souvent la LED intégrée sur les cartes Arduino)
+  Led led(LED_BUILTIN_AUX);
 
   // Initialisation de la LED
   led.init();
   // Allumage de la LED pendant 1 seconde
   led.on();
-  delay(1000);  // Attendre 1 seconde
+  delay(200);  // Attendre 1 seconde
 
   // Extinction de la LED pendant 1 seconde
   led.off();
-  delay(1000);  // Attendre 1 seconde
+  delay(200);  // Attendre 1 seconde
 }

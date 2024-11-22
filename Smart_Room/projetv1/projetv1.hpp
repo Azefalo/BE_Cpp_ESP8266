@@ -1,20 +1,7 @@
-#ifndef PROJET_H
-#define PROJET_H
+#ifndef PROJETV1_HPP
+#define PROJETV1_HPP
 
 #include <Arduino.h>
-
-
-class Capteur {
-protected:
-    int id;
-    String type;
-
-public:
-    Capteur(int id, String type);
-    //virtual float mesurer(); // Méthode virtuelle pure pour mesurer
-    //virtual void afficherValeur() = 0; // Pour afficher la valeur sur l'écran
-};
-
 // Définition de la classe de base Actuator
 class Actuator {
 protected:
@@ -45,6 +32,30 @@ public:
 
     // Méthode pour éteindre la LED
     void off();
+};
+
+class Capteur {
+protected:
+    int id;
+    String type;
+
+public:
+    Capteur(int id, String type);
+    virtual float mesurer(); // Méthode virtuelle pure pour mesurer
+    virtual void afficherValeur(); // Pour afficher la valeur sur l'écran
+};
+
+class CapteurLuminosite : public Capteur {
+private:
+    int pin;
+    int valeurLuminosite;
+
+public:
+    CapteurLuminosite(int id, String type,int pin);
+
+    float mesurer();
+
+    void afficherValeur();
 };
 
 #endif // PROJET_H
