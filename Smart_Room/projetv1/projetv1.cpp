@@ -37,10 +37,9 @@ void Led::off() {
 
 
 //définition de la classe Capteur
-Capteur :: Capteur(int id, String type){
-    this->id=id;
-    this->type=type;
+Capteur :: Capteur(int id, String type):id(id),type(type){
 } 
+
 float Capteur :: mesurer(){
 return 0;
 }
