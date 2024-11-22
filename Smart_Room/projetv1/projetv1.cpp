@@ -1,19 +1,5 @@
 #include"projetv1.hpp"
 
-//class Capteur {
-//protected:
-//    int id;
-//    String type;
-//
-//public:
-//    Capteur(int id, String type){
-//    this->id=id;
-//    this->type=type;
-//    } 
-//    virtual float mesurer() = 0; // Méthode virtuelle pure pour mesurer
-//    //virtual void afficherValeur() = 0; // Pour afficher la valeur sur l'écran
-//};
-
 // Constructeur de la classe Actuator
 Actuator::Actuator(byte pin) {
     this->pin = pin;
@@ -55,12 +41,15 @@ Capteur :: Capteur(int id, String type){
     this->id=id;
     this->type=type;
 } 
-virtual float Capteur :: mesurer()=0;
-virtual void Capteur :: afficherValeur()=0;
+float Capteur :: mesurer(){
+return 0;
+}
+void Capteur :: afficherValeur(){
+}
 
 
 //définition du capteur de luminosité
-CapteurLuminosite :: CapteurLuminosite(int id, int pin) : Capteur(id, "Luminosité"){};
+CapteurLuminosite :: CapteurLuminosite(int id, String type, int pin): Capteur(id, type), pin(pin), valeurLuminosite(0) {}
 
 float CapteurLuminosite :: mesurer(){
         valeurLuminosite = analogRead(pin);

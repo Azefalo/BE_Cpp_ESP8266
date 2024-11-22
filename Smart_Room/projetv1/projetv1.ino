@@ -1,3 +1,5 @@
+#include"projetv1.hpp"
+
 const int lightSensorPin = A0; // Pin analogique connecté au capteur
 int sensorValue = 0;          // Variable pour stocker la lecture du capteur
 
@@ -6,13 +8,8 @@ void setup() {
 }
 
 void loop() {
-  // Lire la valeur analogique (0 à 1023)
-  sensorValue = analogRead(lightSensorPin);
-
-  // Convertir la valeur en intensité lumineuse (en fonction de vos besoins)
-  // Par exemple, simplement afficher la valeur brute
-  Serial.print("Luminosité: ");
-  Serial.println(sensorValue);
-
+  CapteurLuminosite lux(1,"Luminosité",A0);
+  lux.mesurer();
+  lux.afficherValeur();
   delay(500); // Petite pause pour éviter une lecture continue trop rapide
 }

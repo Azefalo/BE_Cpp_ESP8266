@@ -1,12 +1,7 @@
-#ifndef PROJET_H
-#define PROJET_H
+#ifndef PROJETV1_HPP
+#define PROJETV1_HPP
 
 #include <Arduino.h>
-
-
-
-
-
 // Définition de la classe de base Actuator
 class Actuator {
 protected:
@@ -56,7 +51,7 @@ private:
     int valeurLuminosite;
 
 public:
-    CapteurLuminosite(int id, int pin);
+    CapteurLuminosite(int id, String type,int pin);
 
     float mesurer();
 
