@@ -3,6 +3,18 @@
 
 #include <Arduino.h>
 
+
+class Capteur {
+protected:
+    int id;
+    String type;
+
+public:
+    Capteur(int id, String type);
+    //virtual float mesurer(); // Méthode virtuelle pure pour mesurer
+    //virtual void afficherValeur() = 0; // Pour afficher la valeur sur l'écran
+};
+
 // Définition de la classe de base Actuator
 class Actuator {
 protected:

@@ -14,6 +14,12 @@
 //    //virtual void afficherValeur() = 0; // Pour afficher la valeur sur l'écran
 //};
 
+Capteur::Capteur(int id, String type){
+    this->id=id;
+    this->type=type;
+} 
+//float Capteur::mesurer() = 0; // Méthode virtuelle pure pour mesurer
+    //virtual void afficherValeur() = 0; // Pour afficher la valeur sur l'écran
 // Constructeur de la classe Actuator
 Actuator::Actuator(byte pin) {
     this->pin = pin;
