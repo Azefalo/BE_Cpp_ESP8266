@@ -1,5 +1,5 @@
-//#include"projet.h"
-#include <Arduino.h>
+#include"projet.h"
+
 //class Capteur {
 //protected:
 //    int id;
@@ -14,38 +14,38 @@
 //    //virtual void afficherValeur() = 0; // Pour afficher la valeur sur l'écran
 //};
 
-class Actuator{ // définition de la classe actionneur
-  protected : byte pin;
-  
-  public :
-  Actuator(byte pin){
-  this->pin=pin;
-  }
-  void init(){
-  pinMode(pin,OUTPUT);
-  }
-};
+// Constructeur de la classe Actuator
+Actuator::Actuator(byte pin) {
+    this->pin = pin;
+}
 
-class Led: public Actuator{
-  private: byte pin;
-  
-  public : 
-  
-  Led(byte pin):Actuator(pin){
-  }
-  void init(){
-  Actuator::init();
-  }
-  void on(){
-  digitalWrite(pin,HIGH);
-  }
-  void off(){
-  digitalWrite(pin,LOW);
-  }
-  
-};
+// Méthode d'initialisation de la pin en mode OUTPUT
+void Actuator::init() {
+    pinMode(pin, OUTPUT);
+}
 
+// Méthode pour accéder à la pin
+byte Actuator::getPin() const {
+    return pin;
+}
 
+// Constructeur de la classe Led qui appelle le constructeur de la classe Actuator
+Led::Led(byte pin) : Actuator(pin) {}
+
+// Méthode d'initialisation de la LED
+void Led::init() {
+    Actuator::init();  // Appel de l'init de la classe de base
+}
+
+// Méthode pour allumer la LED
+void Led::on() {
+    digitalWrite(getPin(), HIGH);  // Utilisation de getPin() pour récupérer la pin
+}
+
+// Méthode pour éteindre la LED
+void Led::off() {
+    digitalWrite(getPin(), LOW);  // Utilisation de getPin() pour récupérer la pin
+}
 
 //class CapteurLuminosite : public Capteur {
 //private:
