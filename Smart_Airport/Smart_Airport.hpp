@@ -8,7 +8,7 @@
 
 using byte = uint8_t;
 
-//extern Servo servoMotor;    //  Sets servoMotor as a global variable
+extern Servo servoMotor;    //  Sets servoMotor as a global variable
 
 // Définition de la classe de base Actuator
 class Actuator {
@@ -88,8 +88,8 @@ public:
 
 class WifiManager {
 private:
-  const char* ssid;       // Nome da rede Wi-Fi
-  const char* password;   // Senha da rede Wi-Fi
+  const char* ssid;       // Wi-Fi's name
+  const char* password;   // Wi-Fi's password
 
 public:
   // Construtor

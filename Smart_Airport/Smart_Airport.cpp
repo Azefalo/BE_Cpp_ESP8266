@@ -1,6 +1,60 @@
 #include "Smart_Airport.hpp"
+#include "Wifi_Access.hpp"
 
 Servo servoMotor;
+
+
+
+
+// Construtor
+WifiManager::WifiManager(const char* ssid, const char* password)
+    : ssid(ssid), password(password) {}
+
+// Inicializa a conexão Wi-Fi
+void WifiManager::init() {
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to Wi-Fi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nWi-Fi connected.");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+// Verifica se está conectado ao Wi-Fi
+bool WifiManager::isConnected() {
+  return WiFi.status() == WL_CONNECTED;
+}
+
+// Retorna o endereço IP
+String WifiManager::getIP() {
+  if (isConnected()) {
+    return WiFi.localIP().toString();
+  } else {
+    return "Not connected";
+  }
+}
+
+// Reconecta ao Wi-Fi se a conexão for perdida
+void WifiManager::reconnect() {
+  if (!isConnected()) {
+    Serial.println("Reconnecting to Wi-Fi...");
+    WiFi.disconnect();
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+    }
+    Serial.println("\nReconnected to Wi-Fi.");
+  }
+}
+
+
+
+
+
 
 
 
