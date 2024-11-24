@@ -1,7 +1,7 @@
 # BE_Cpp_ESP8266
 
 
-![Aeroporto Inteligente](Smart_Airport/Imagens/AI_Airport.png)
+![Aeroporto Inteligente](Smart_Airport/Images/AI_Airport.png)
 
 
 
