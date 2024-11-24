@@ -4,16 +4,13 @@
 Servo servoMotor;
 
 
-
-
 // Construtor
-WifiManager::WifiManager(const char* ssid, const char* password)
-    : ssid(ssid), password(password) {}
+WifiManager::WifiManager(const char* ssid, const char* password) : ssid(ssid), password(password) {}
 
 // Inicializa a conexão Wi-Fi
 void WifiManager::init() {
   WiFi.begin(ssid, password);
-  Serial.print("Connecting to Wi-Fi");
+  Serial.print("\n\nConnecting to Wi-Fi");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -37,7 +34,7 @@ String WifiManager::getIP() {
   }
 }
 
-// Reconecta ao Wi-Fi se a conexão for perdida
+// Reconects the Wi-Fi if the conection is lost
 void WifiManager::reconnect() {
   if (!isConnected()) {
     Serial.println("Reconnecting to Wi-Fi...");

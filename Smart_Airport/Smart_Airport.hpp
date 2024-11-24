@@ -6,7 +6,7 @@
 #include <ESP8266WiFi.h>
 
 
-using byte = uint8_t;
+//using byte = uint8_t;
 
 extern Servo servoMotor;    //  Sets servoMotor as a global variable
 
