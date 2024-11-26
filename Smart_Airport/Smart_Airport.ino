@@ -2,10 +2,12 @@
 #include "Smart_Airport.hpp"
 #include "ESP8266_Pins.hpp"
 
-Led led(LightLampPin);
-CapteurLuminosite lux(1 ,"Luminosité", LightSensorPin);
+WifiManager wifi(WiFi_ssid, WiFi_Password);
+
+Led led(LightPin);
 MoteurToit Moteur(MotorPin);
-WifiManager wifi(WiFi_ssid, WiFi_Password); 
+
+CapteurLuminosite lux(1 ,"Luminosité", LightSensorPin);
 
 
 // Variables pour le contrôle de l'angle
