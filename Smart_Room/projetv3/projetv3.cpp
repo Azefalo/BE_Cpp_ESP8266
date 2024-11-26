@@ -1,5 +1,5 @@
-#include "Smart_Airport.hpp"
-#include "Wifi_Access.hpp"
+#include"projetv3.hpp"
+//#include "Wifi_Access.hpp"
 
 Servo servoMotor;
 
@@ -123,4 +123,41 @@ void CapteurLuminosite :: afficherValeur(){
   Serial.print("Luminosité : ");
   Serial.println(valeurLuminosite);
 }
+
+UltrasonicSensor :: UltrasonicSensor(int id, String type, byte pin) : Capteur(id, type, pin){}
+
+// Fonction pour mesurer la distance
+int UltrasonicSensor :: measureDistance() {
+  // Envoie une impulsion ultrasonique
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pin, LOW);
+  
+  // Lit la durée de l'écho
+  pinMode(pin, INPUT);
+  unsigned long startTime = micros();
+  while (digitalRead(pin) == LOW) {
+    if (micros() - startTime > 30000) { // Timeout de 30 ms
+      return -1; // Retourne -1 si aucun signal reçu
+    }
+  }
+
+  unsigned long echoStart = micros();
+  while (digitalRead(pin) == HIGH) {
+    if (micros() - echoStart > 30000) { // Timeout si l'écho est trop long
+      return -1; // Retourne -1 pour signal trop long
+    }
+  }
+  unsigned long echoEnd = micros();
+  
+  // Calcule la durée et la distance
+  duration = echoEnd - echoStart;
+  distance = duration * 0.034 / 2;
+
+  return distance;
+}
+
  

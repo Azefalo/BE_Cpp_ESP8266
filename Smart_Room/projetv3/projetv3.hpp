@@ -1,6 +1,5 @@
-#ifndef SMART_AIRPORT_HPP
-#define SMARTI_AIRPORT_HPP
-
+#ifndef PROJETV3_HPP
+#define PROJETV3_HPP
 #include <Arduino.h>
 #include <Servo.h>
 #include <ESP8266WiFi.h>
@@ -29,7 +28,7 @@ class Led : public Actuator {
 public:
   // Constructeur de la classe Led qui appelle le constructeur de la classe Actuator
   Led(byte pin);
-
+   
   // Méthode pour allumer la LED
   void on();
 
@@ -64,7 +63,6 @@ public:
   virtual float mesurer(); // Méthode virtuelle pure pour mesurer
   virtual void afficherValeur(); // Pour afficher la valeur sur l'écran
   
-
 };
 
 class CapteurLuminosite : public Capteur {
@@ -75,10 +73,29 @@ private:
 public:
   CapteurLuminosite(int id, String type, byte pin);
 
+  // Méthode d'initialisation du Sensor de luminosité
+  void init() override;
+
   float mesurer();
 
   void afficherValeur();
 };
+
+
+class UltrasonicSensor : public Capteur{
+private:
+  //byte signalPin; // Broche de signal pour le capteur
+  long duration; // Durée de l'impulsion ultrasonique
+  int distance;  // Distance calculée
+
+public:
+  // Constructeur pour initialiser la broche
+  UltrasonicSensor(int id, String type, byte pin);
+
+  // Fonction pour mesurer la distance
+  int measureDistance();
+};
+
 
 
 
@@ -110,15 +127,4 @@ public:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-#endif // SMART_AIRPORT
+#endif

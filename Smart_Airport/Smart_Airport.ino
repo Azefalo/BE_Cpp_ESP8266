@@ -21,7 +21,6 @@ void setup() {
   lux.init();       // Inicialises the light sensor
   Moteur.init();    // Inicialises the motor
   
-  
 }
 
 void loop() {
