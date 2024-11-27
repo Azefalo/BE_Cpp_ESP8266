@@ -5,9 +5,6 @@
 #include <Servo.h>
 #include <ESP8266WiFi.h>
 
-
-//using byte = uint8_t;
-
 extern Servo servoMotor;    //  Sets servoMotor as a global variable
 
 // Définition de la classe de base Actuator
