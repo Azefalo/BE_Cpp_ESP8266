@@ -1,7 +1,7 @@
-#include "Smart_Airport.hpp"
-#include "Wifi_Access.hpp"
-#include <Servo.h>
+#include"projetv6.hpp"
+//#include "Wifi_Access.hpp"
 
+#include <Servo.h>
 Servo servoMotor;
 
 
@@ -49,6 +49,48 @@ void WifiManager::reconnect() {
   }
 }
 
+
+
+// Construtor para inicializar com o endereço I2C
+TemperatureHumiditySensor(byte address = 0x44) : i2cAddress(address) {}
+
+// Inicializa o sensor
+bool TemperatureHumiditySensor :: begin() {
+  return sht31.begin(i2cAddress);
+}
+
+// Retorna a temperatura atual em Celsius
+float TemperatureHumiditySensor :: getTemperature() {
+  return sht31.readTemperature();
+}
+
+// Retorna a umidade atual em porcentagem
+float TemperatureHumiditySensor :: getHumidity() {
+  return sht31.readHumidity();
+}
+
+void TemperatureHumiditySensor :: show(){
+  if (sensor.isValidReading()) {
+    // Lê e exibe a temperatura
+    float temperature = sensor.getTemperature();
+    Serial.print("Température: ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+
+    // Lê e exibe a umidade
+    float humidity = sensor.getHumidity();
+    Serial.print("Humidité: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+  } else {
+    Serial.println("Erreur de lecture du capteur.");
+  }
+}
+
+// Verifica se os valores são válidos
+bool TemperatureHumiditySensor :: isValidReading() {
+  return !isnan(getTemperature()) && !isnan(getHumidity());
+}
 
 
 
@@ -124,13 +166,52 @@ void CapteurLuminosite :: afficherValeur(){
   Serial.print("Luminosité : ");
   Serial.println(valeurLuminosite);
 }
- 
-Button :: Button(int id, String type, byte pin) : Capteur(id, type, pin){}
+
+UltrasonicSensor :: UltrasonicSensor(int id, String type, byte pin) : Capteur(id, type, pin){}
+
+// Fonction pour mesurer la distance
+int UltrasonicSensor :: measureDistance() {
+  // Envoie une impulsion ultrasonique
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pin, LOW);
   
-bool Button :: IsActivated(){
+  // Lit la durée de l'écho
+  pinMode(pin, INPUT);
+  unsigned long startTime = micros();
+  while (digitalRead(pin) == LOW) {
+    if (micros() - startTime > 30000) { // Timeout de 30 ms
+      return -1; // Retourne -1 si aucun signal reçu
+    }
+  }
+
+  unsigned long echoStart = micros();
+  while (digitalRead(pin) == HIGH) {
+    if (micros() - echoStart > 30000) { // Timeout si l'écho est trop long
+      return -1; // Retourne -1 pour signal trop long
+    }
+  }
+  unsigned long echoEnd = micros();
+  
+  // Calcule la durée et la distance
+  duration = echoEnd - echoStart;
+  distance = duration * 0.034 / 2;
+
+  return distance;
+}
+
+
+PushButton :: PushButton(int id, String type, byte pin) : Capteur(id, type, pin){}
+  
+bool PushButton :: IsActivated(){
   if (digitalRead(pin)==false){
     return true;
   }else{
     return false;
   }
 }   
+
+ 

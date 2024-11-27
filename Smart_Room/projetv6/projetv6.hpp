@@ -1,5 +1,5 @@
-#ifndef SMART_AIRPORT_HPP
-#define SMARTI_AIRPORT_HPP
+#ifndef PROJETV6_HPP
+#define PROJETV6_HPP
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
@@ -23,7 +23,7 @@ class Led : public Actuator {
 public:
   // Constructeur de la classe Led qui appelle le constructeur de la classe Actuator
   Led(byte pin);
-
+   
   // Méthode pour allumer la LED
   void on();
 
@@ -58,7 +58,6 @@ public:
   virtual float mesurer(); // Méthode virtuelle pure pour mesurer
   virtual void afficherValeur(); // Pour afficher la valeur sur l'écran
   
-
 };
 
 class CapteurLuminosite : public Capteur {
@@ -69,19 +68,39 @@ private:
 public:
   CapteurLuminosite(int id, String type, byte pin);
 
+  // Méthode d'initialisation du Sensor de luminosité
+  void init() override;
+
   float mesurer();
 
   void afficherValeur();
 };
 
-class Button : public Capteur{
+
+class UltrasonicSensor : public Capteur{
+private:
+  //byte signalPin; // Broche de signal pour le capteur
+  long duration; // Durée de l'impulsion ultrasonique
+  int distance;  // Distance calculée
+
+public:
+  // Constructeur pour initialiser la broche
+  UltrasonicSensor(int id, String type, byte pin);
+
+  // Fonction pour mesurer la distance
+  int measureDistance();
+};
+
+
+class PushButton : public Capteur{
 private:
   bool Activated;
 public:
-  Button(int id, String type, byte pin);
+  PushButton(int id, String type, byte pin);
   
   bool IsActivated();
 };
+
 
 
 
@@ -110,17 +129,34 @@ public:
 
 
 
+// Classe para gerenciar o sensor SHT31
+class TemperatureHumiditySensor {
+private:
+    Adafruit_SHT31 sht31; // Objeto interno da biblioteca Adafruit
+    byte i2cAddress;   // Endereço I2C do sensor
+
+public:
+  // Construtor para inicializar com o endereço I2C
+  TemperatureHumiditySensor(byte address = 0x44);
+
+  // Inicializa o sensor
+  bool begin();
+
+  // Retorna a temperatura atual em Celsius
+  float getTemperature();
+
+   // Retorna a umidade atual em porcentagem
+  float getHumidity();
+
+  void show();
+
+  // Verifica se os valores são válidos
+  bool isValidReading();
+};
 
 
 
 
 
 
-
-
-
-
-
-
-
-#endif // SMART_AIRPORT
+#endif
