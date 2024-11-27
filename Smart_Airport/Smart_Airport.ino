@@ -4,10 +4,12 @@
 
 WifiManager wifi(WiFi_ssid, WiFi_Password);
 
-Led led(LightPin);
-MoteurToit Moteur(MotorPin);
+Led lamp(LightPin);
+MoteurToit moteur(MotorPin);
 
 CapteurLuminosite lux(1 ,"Luminosité", LightSensorPin);
+Button emergencyButton(2, "Emergence Button", PushButtonPin);
+Button touchButton(3, "Lampe", TouchButtonPin);
 
 
 // Variables pour le contrôle de l'angle
@@ -18,28 +20,38 @@ void setup() {
   Serial.begin(9600); // Inicialises the Serial Monitor for debugin
   delay(100);
 
-  wifi.init();      // Inicialises the Wi-Fi
-  led.init();       // Inicialises the lamp
-  lux.init();       // Inicialises the light sensor
-  Moteur.init();    // Inicialises the motor
+  wifi.init();        // Inicialises the Wi-Fi
+  lamp.init();        // Inicialises the lamp
+  lux.init();         // Inicialises the light sensor
+  moteur.init();      // Inicialises the motor
+  emergencyButton.init();  // Inicialises the push button
+  touchButton.init(); // Inicialises the touch button
   
 }
 
 void loop() {
   // Tests the light activation
-  led.on();
+  lamp.on();
   delay(500);
-  led.off();
+  lamp.off();
   delay(500);
 
   // Mesures the light with the sensor and shows the amount of light detected
   lux.mesurer();
   lux.afficherValeur();
 
+  if (emergencyButton.IsActivated() == true){
+    lamp.on();
+  }
+  else{
+    lamp.off();
+  delay(300);
+  }
+
 /*
   // Fait tourner le servo de 0 à 180 degrés
   for (angle = 0; angle <= 180; angle += step) {
-    Moteur.setAngle(angle);      // Définit l'angle du servo
+    moteur.setAngle(angle);      // Définit l'angle du servo
     Serial.print("Angle : ");      // Retour via la communication série
     Serial.println(angle);
     delay(500);                    // Attend pour permettre au servo de bouger
@@ -47,7 +59,7 @@ void loop() {
 
   // Fait tourner le servo de 180 à 0 degrés
   for (angle = 180; angle >= 0; angle -= step) {
-    Moteur.setAngle(angle);        // Définit l'angle du servo
+    moteur.setAngle(angle);        // Définit l'angle du servo
     Serial.print("Angle : ");      // Retour via la communication série
     Serial.println(angle);
     delay(500);                    // Attend pour permettre au servo de bouger

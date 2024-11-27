@@ -77,6 +77,14 @@ public:
   void afficherValeur();
 };
 
+class Button : public Capteur{
+private:
+  bool Activated;
+public:
+  Button(int id, String type, byte pin);
+  
+  bool IsActivated();
+};
 
 
 

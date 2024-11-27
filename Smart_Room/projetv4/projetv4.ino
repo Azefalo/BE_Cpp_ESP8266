@@ -1,22 +1,22 @@
 #include "projetv4.hpp"
 
-UltrasonicSensor ultrasonic(7,"Ultrassonic",D7); // Création d'un objet pour le capteur connecté à D1
+
+PushButton EmergencyButton(5,"Button d'emergence", D7);
+Led Light(LED_BUILTIN_AUX);
 
 void setup() {
-    Serial.begin(9600); // Initialise la communication série
-    Serial.println("Test du capteur ultrasonique avec classe");
-    ultrasonic.init(); // Initialise le capteur
+  Serial.begin(9600); // Initialise la communication série
+  Serial.println("Test du button poussoir");
+  EmergencyButton.init(); // Initialise le capteur
+  Light.init();
 }
 
 void loop() {
-  int distance = ultrasonic.measureDistance();
-  if (distance == -1) {
-    Serial.println("Aucun signal reçu ou écho trop long.");
-  } else {
-    Serial.print("Distance : ");
-    Serial.print(distance);
-    Serial.println(" cm");
+  if (EmergencyButton.IsActivated() == true){
+    Light.on();
   }
-
-  delay(500); // Pause de 500 ms avant la prochaine mesure
+  else{
+    Light.off();
+  delay(300);
+  }
 }
