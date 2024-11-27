@@ -1,24 +1,37 @@
-#include <ESP8266WiFi.h>
+#include <Wire.h>
+#include "Adafruit_SHT31.h"
 
-// Substitua com suas credenciais de rede
-const char* ssid = "Vai Brasil";
-const char* password = "Senha123";
+// Criação de um objeto para o sensor
+Adafruit_SHT31 sht31 = Adafruit_SHT31();
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Initializing Wi-Fi...");
-  
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting to Wi-Fi");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  Serial.begin(9600); // Inicializa a comunicação serial
+  Serial.println("Test du Grove - Capteur de température et d'humidité (SHT31)");
+
+  // Inicializa o sensor
+  if (!sht31.begin(0x44)) { // Endereço padrão do SHT31
+    Serial.println("Échec de la communication avec le capteur SHT31.");
+    while (1) delay(1); // Fica preso aqui em caso de erro
   }
-  Serial.println("\nWi-Fi connected.");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
 }
 
 void loop() {
-  // Nada aqui
+  // Lê os valores de temperatura e umidade
+  float temperature = sht31.readTemperature(); // Temperatura em °C
+  float humidity = sht31.readHumidity();       // Umidade em %
+
+  // Verifica se os valores são válidos
+  if (!isnan(temperature) && !isnan(humidity)) {
+    Serial.print("Température: ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+
+    Serial.print("Humidité: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+  } else {
+    Serial.println("Erreur de lecture du capteur.");
+  }
+
+  delay(2000); // Espera 2 segundos antes da próxima leitura
 }

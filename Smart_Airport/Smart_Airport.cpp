@@ -124,3 +124,12 @@ void CapteurLuminosite :: afficherValeur(){
   Serial.println(valeurLuminosite);
 }
  
+Button :: Button(int id, String type, byte pin) : Capteur(id, type, pin){}
+  
+bool Button :: IsActivated(){
+  if (digitalRead(pin)==false){
+    return true;
+  }else{
+    return false;
+  }
+}   

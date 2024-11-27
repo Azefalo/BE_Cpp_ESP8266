@@ -160,4 +160,15 @@ int UltrasonicSensor :: measureDistance() {
   return distance;
 }
 
+
+PushButton :: PushButton(int id, String type, byte pin) : Capteur(id, type, pin){}
+  
+bool PushButton :: IsActivated(){
+  if (digitalRead(pin)==false){
+    return true;
+  }else{
+    return false;
+  }
+}   
+
  

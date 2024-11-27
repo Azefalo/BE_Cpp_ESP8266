@@ -97,6 +97,15 @@ public:
 };
 
 
+class PushButton : public Capteur{
+private:
+  bool Activated;
+public:
+  PushButton(int id, String type, byte pin);
+  
+  bool IsActivated();
+};
+
 
 
 
