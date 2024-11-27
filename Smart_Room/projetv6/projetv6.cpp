@@ -52,9 +52,15 @@ void WifiManager::reconnect() {
 
 
 // Construtor para inicializar com o endereço I2C
-TemperatureHumiditySensor(byte address = 0x44) : i2cAddress(address) {}
+TemperatureHumiditySensor::TemperatureHumiditySensor(byte address = 0x44) : i2cAddress(address) {}
 
 // Inicializa o sensor
+void TemperatureHumiditySensor :: init(){
+  if (!TemperatureHumiditySensor::begin()) {
+    Serial.println("Échec de la communication avec le capteur SHT31.");
+    while (1) delay(1);  // Fica preso aqui em caso de erro
+  }
+}
 bool TemperatureHumiditySensor :: begin() {
   return sht31.begin(i2cAddress);
 }
@@ -70,15 +76,15 @@ float TemperatureHumiditySensor :: getHumidity() {
 }
 
 void TemperatureHumiditySensor :: show(){
-  if (sensor.isValidReading()) {
+  if (TemperatureHumiditySensor::isValidReading()) {
     // Lê e exibe a temperatura
-    float temperature = sensor.getTemperature();
+    float temperature = TemperatureHumiditySensor::getTemperature();
     Serial.print("Température: ");
     Serial.print(temperature);
     Serial.println(" °C");
 
     // Lê e exibe a umidade
-    float humidity = sensor.getHumidity();
+    float humidity = TemperatureHumiditySensor::getHumidity();
     Serial.print("Humidité: ");
     Serial.print(humidity);
     Serial.println(" %");

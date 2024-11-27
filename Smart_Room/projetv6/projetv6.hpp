@@ -1,6 +1,7 @@
 #ifndef PROJETV6_HPP
 #define PROJETV6_HPP
-
+#include <Wire.h>
+#include "Adafruit_SHT31.h"
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 
@@ -137,9 +138,10 @@ private:
 
 public:
   // Construtor para inicializar com o endereço I2C
-  TemperatureHumiditySensor(byte address = 0x44);
+  TemperatureHumiditySensor(byte address);
 
   // Inicializa o sensor
+  void init();
   bool begin();
 
   // Retorna a temperatura atual em Celsius
