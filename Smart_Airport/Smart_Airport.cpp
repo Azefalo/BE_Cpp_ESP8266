@@ -152,6 +152,29 @@ void Led::off() {
   digitalWrite(getPin(), LOW);  // Utilisation de getPin() pour récupérer la pin
 }
 
+// Constructeur de la classe Buzzer
+Buzzer::Buzzer(byte pin) : Actuator(pin) {}
+
+// Méthode pour jouer un motif d'alarme
+void Buzzer::playFireAlarmPattern(int shortBeepDuration, int shortBeepInterval, int pauseBetweenPatterns) {
+    for (int i = 0; i < 3; i++) { // Trois bips courts
+        digitalWrite(getPin(), HIGH); // Utilise getPin() pour récupérer la broche
+        delay(shortBeepDuration);
+        digitalWrite(getPin(), LOW); // Utilise getPin()
+        delay(shortBeepInterval);
+    }
+    delay(pauseBetweenPatterns); // Pause entre les motifs
+}
+
+// Méthode pour activer un son continu
+void Buzzer::SetTone() {
+    tone(getPin(), 1000); // Utilise getPin()
+}
+
+// Méthode pour arrêter le son
+void Buzzer::SetnoTone() {
+    noTone(getPin()); // Utilise getPin()
+}
 
 // Constructeur de la classe Led qui appelle le constructeur de la classe Actuator
 MoteurToit::MoteurToit(byte pin) : Actuator(pin) {}

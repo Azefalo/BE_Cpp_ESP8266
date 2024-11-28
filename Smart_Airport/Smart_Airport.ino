@@ -5,6 +5,7 @@
 WifiManager wifi(WiFi_ssid, WiFi_Password);
 
 Led lamp(LightPin);
+Buzzer alarmBuzzer(BuzzerPin);
 MoteurToit moteur(MotorPin);
 ScreenManager screen(D2,D1);
 
@@ -24,6 +25,7 @@ void setup() {
 
   wifi.init();              // Inicialises the Wi-Fi
   lamp.init();              // Inicialises the lamp
+  alarmBuzzer.init();       // Inicialises the alarm
   screen.init();
   lux.init();               // Inicialises the light sensor
   moteur.init();            // Inicialises the motor
@@ -57,6 +59,8 @@ void loop() {
   screen.show(0,255,0,"Hello, Grove!","RGB Backlight!");
   screen.show(0,0,255,"ESP8266 Rocks!","I2C LCD Test!");
   screen.setrgb(0,0,255);
+
+  alarmBuzzer.playFireAlarmPattern(200, 100, 1000); // Réglage des durées
 
 /*
   // Fait tourner le servo de 0 à 180 degrés

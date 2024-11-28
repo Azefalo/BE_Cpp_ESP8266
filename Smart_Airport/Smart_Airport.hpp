@@ -34,6 +34,14 @@ public:
   void off();
 };
 
+class Buzzer : public Actuator {
+public:
+    Buzzer(byte pin); // Le constructeur utilise simplement l'attribut pin de la classe Actuator
+    void playFireAlarmPattern(int shortBeepDuration, int shortBeepInterval, int pauseBetweenPatterns);
+    void SetTone();
+    void SetnoTone();
+};
+
 // Définition de la classe servomoteur dérivée de Actuator
 class MoteurToit : public Actuator {
 private: int angle;
