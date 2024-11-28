@@ -1,11 +1,10 @@
 #include"projetv7.hpp"
-#define BUZZER_PIN D7 // Définit la broche du buzzer
+#define BUZZER_PIN D9 // Définit la broche du buzzer
 Buzzer alarmBuzzer(BUZZER_PIN);
 
 void setup() {
     // Initialisation
     Serial.begin(9600);
-    Serial.println("GBUGBYBBGFAQAFFFZAQFAE");
     alarmBuzzer.init();
     Serial.println("Système d'Alarme Incendie Démarré");
 }

@@ -109,15 +109,12 @@ public :
 
 };
 
-class Buzzer : public Actuator{
-private: 
-  byte pin;
-public :
-  Buzzer(byte pin);
-  void init();
-  void playFireAlarmPattern(int shortBeepDuration ,int shortBeepInterval,int  pauseBetweenPatterns);
-  void SetTone();
-  void SetnoTone();
+class Buzzer : public Actuator {
+public:
+    Buzzer(byte pin); // Le constructeur utilise simplement l'attribut pin de la classe Actuator
+    void playFireAlarmPattern(int shortBeepDuration, int shortBeepInterval, int pauseBetweenPatterns);
+    void SetTone();
+    void SetnoTone();
 };
 
 

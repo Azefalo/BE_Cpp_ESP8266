@@ -108,30 +108,33 @@ void Led::off() {
 
 
 
-// Constructeur de la classe buzzer
-Buzzer::Buzzer(byte pin): Actuator(pin) {}
+// Constructeur de la classe Buzzer
+Buzzer::Buzzer(byte pin) : Actuator(pin) {}
 
-void Buzzer::init(): Actuator(init) {}
+//// Initialisation du buzzer
+//void Buzzer::init() {
+//    Actuator::init(); // Appelle la méthode init() de la classe Actuator
+//}
 
-// Méthode pour déclencher une alarme avec une durée et une fréquence spécifiques
+// Méthode pour jouer un motif d'alarme
 void Buzzer::playFireAlarmPattern(int shortBeepDuration, int shortBeepInterval, int pauseBetweenPatterns) {
     for (int i = 0; i < 3; i++) { // Trois bips courts
-        digitalWrite(pin, HIGH);
+        digitalWrite(getPin(), HIGH); // Utilise getPin() pour récupérer la broche
         delay(shortBeepDuration);
-        digitalWrite(pin, LOW);
+        digitalWrite(getPin(), LOW); // Utilise getPin()
         delay(shortBeepInterval);
     }
     delay(pauseBetweenPatterns); // Pause entre les motifs
 }
 
-// Méthode pour définir un son continu
+// Méthode pour activer un son continu
 void Buzzer::SetTone() {
-    tone(pin, 1000); // Par exemple, une fréquence par défaut de 1000 Hz
+    tone(getPin(), 1000); // Utilise getPin()
 }
 
 // Méthode pour arrêter le son
 void Buzzer::SetnoTone() {
-    noTone(pin); // Arrêter le son sur la broche associée
+    noTone(getPin()); // Utilise getPin()
 }
 
 
