@@ -37,7 +37,6 @@ public:
 
 // Définition de la classe servomoteur dérivée de Actuator
 class MoteurToit : public Actuator {
-private: int angle;
 public:
   // Constructeur de la classe servomoteur qui appelle le constructeur de la classe Actuator
   MoteurToit(byte pin);
@@ -100,7 +99,6 @@ class ScreenManager{
 private:
   byte SDA,SCL;
   int r,g,b;
-  String Message1,Message2;
   
 public : 
   ScreenManager(byte SDA,byte SCL);
@@ -111,6 +109,16 @@ public :
 
 };
 
+class Buzzer : public Actuator{
+private: 
+  byte pin;
+public :
+  Buzzer(byte pin);
+  void init();
+  void playFireAlarmPattern(int shortBeepDuration ,int shortBeepInterval,int  pauseBetweenPatterns);
+  void SetTone();
+  void SetnoTone();
+};
 
 
 class WifiManager {

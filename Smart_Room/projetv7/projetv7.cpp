@@ -1,10 +1,10 @@
-#include"projetv5.hpp"
+#include"projetv7.hpp"
 //#include "Wifi_Access.hpp"
 #include <Wire.h>
 #include "rgb_lcd.h" // Bibliothèque dédiée au Grove LCD RGB Backlight
-
+#include <Servo.h>
 rgb_lcd lcd; // Initialisation de l'écran Grove LCD
-//Servo servoMotor;
+Servo servoMotor;
 
 
 // Constructeur
@@ -107,19 +107,47 @@ void Led::off() {
 }
 
 
-//// Constructeur de la classe Led qui appelle le constructeur de la classe Actuator
-//MoteurToit::MoteurToit(byte pin) : Actuator(pin) {}
-//
-//// Méthode d'initialisation de la LED
-//void MoteurToit::init(){
-//  servoMotor.attach(pin);
-//}
-//
-//// Méthode pour allumer la LED
-//void MoteurToit::setAngle(int angle) {
-//  servoMotor.write(angle);
-//}
-//
+
+// Constructeur de la classe buzzer
+Buzzer::Buzzer(byte pin): Actuator(pin) {}
+
+void Buzzer::init(): Actuator(init) {}
+
+// Méthode pour déclencher une alarme avec une durée et une fréquence spécifiques
+void Buzzer::playFireAlarmPattern(int shortBeepDuration, int shortBeepInterval, int pauseBetweenPatterns) {
+    for (int i = 0; i < 3; i++) { // Trois bips courts
+        digitalWrite(pin, HIGH);
+        delay(shortBeepDuration);
+        digitalWrite(pin, LOW);
+        delay(shortBeepInterval);
+    }
+    delay(pauseBetweenPatterns); // Pause entre les motifs
+}
+
+// Méthode pour définir un son continu
+void Buzzer::SetTone() {
+    tone(pin, 1000); // Par exemple, une fréquence par défaut de 1000 Hz
+}
+
+// Méthode pour arrêter le son
+void Buzzer::SetnoTone() {
+    noTone(pin); // Arrêter le son sur la broche associée
+}
+
+
+// Constructeur de la classe Led qui appelle le constructeur de la classe Actuator
+MoteurToit::MoteurToit(byte pin) : Actuator(pin) {}
+
+// Méthode d'initialisation de la LED
+void MoteurToit::init(){
+  servoMotor.attach(pin);
+}
+
+// Méthode pour allumer la LED
+void MoteurToit::setAngle(int angle) {
+  servoMotor.write(angle);
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
