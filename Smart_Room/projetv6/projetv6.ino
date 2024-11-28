@@ -1,19 +1,17 @@
 #include "projetv6.hpp"
 
-
-
-// Criação de um objeto para o sensor
+// Création d'un objet pour le capteur de température et d'humidité
 TemperatureHumiditySensor sensor(D3);
 
 void setup() {
-  Serial.begin(9600);  // Inicializa a comunicação serial
+  Serial.begin(9600);  // Initialise la communication série
   Serial.println("Test du Grove - Capteur de température et d'humidité (SHT31)");
-  sensor.init();
+  sensor.init(); // Initialisation du capteur
 }
 
 void loop() {
-  // Verifica se a leitura é válida
+  // Vérifie si la lecture du capteur est valide et affiche les données
   sensor.show();
 
-  delay(2000);  // Espera 2 segundos antes da próxima leitura
+  delay(2000);  // Attente de 2 secondes avant la prochaine lecture
 }
