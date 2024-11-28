@@ -1,11 +1,9 @@
-#ifndef SMART_AIRPORT_HPP
-#define SMARTI_AIRPORT_HPP
-
+#ifndef PROJETV6_HPP
+#define PROJETV6_HPP
+#include <Wire.h>
+#include "Adafruit_SHT31.h"
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <Wire.h>
-#include "rgb_lcd.h" // Bibliothèque dédiée au Grove LCD RGB Backlight
-#include "Adafruit_SHT31.h"
 
 // Définition de la classe de base Actuator
 class Actuator {
@@ -26,7 +24,7 @@ class Led : public Actuator {
 public:
   // Constructeur de la classe Led qui appelle le constructeur de la classe Actuator
   Led(byte pin);
-
+   
   // Méthode pour allumer la LED
   void on();
 
@@ -48,6 +46,7 @@ public:
   void setAngle(int angle);
 };
 
+
 class Capteur {
 protected:
   byte pin;
@@ -59,6 +58,7 @@ public:
   virtual void init(); //polymorphisme
   virtual float mesurer(); // Méthode virtuelle pure pour mesurer
   virtual void afficherValeur(); // Pour afficher la valeur sur l'écran
+  
 };
 
 class CapteurLuminosite : public Capteur {
@@ -69,19 +69,66 @@ private:
 public:
   CapteurLuminosite(int id, String type, byte pin);
 
+  // Méthode d'initialisation du Sensor de luminosité
+  void init() override;
+
   float mesurer();
 
   void afficherValeur();
 };
 
-class Button : public Capteur{
+
+class UltrasonicSensor : public Capteur{
+private:
+  //byte signalPin; // Broche de signal pour le capteur
+  long duration; // Durée de l'impulsion ultrasonique
+  int distance;  // Distance calculée
+
+public:
+  // Constructeur pour initialiser la broche
+  UltrasonicSensor(int id, String type, byte pin);
+
+  // Fonction pour mesurer la distance
+  int measureDistance();
+};
+
+
+class PushButton : public Capteur{
 private:
   bool Activated;
 public:
-  Button(int id, String type, byte pin);
+  PushButton(int id, String type, byte pin);
   
   bool IsActivated();
 };
+
+
+
+
+
+class WifiManager {
+private:
+  const char* ssid;       // Wi-Fi's name
+  const char* password;   // Wi-Fi's password
+
+public:
+  // Construtor
+  WifiManager(const char* ssid, const char* password);
+
+  // Inicializa a conexão Wi-Fi
+  void init();
+
+  // Verifica se está conectado
+  bool isConnected();
+
+  // Retorna o endereço IP
+  String getIP();
+
+  // Reconecta ao Wi-Fi
+  void reconnect();
+};
+
+
 
 // Classe para gerenciar o sensor SHT31
 class TemperatureHumiditySensor {
@@ -109,39 +156,9 @@ public:
   bool isValidReading();
 };
 
-class ScreenManager{
-private:
-  byte SDA,SCL;
-  int r,g,b;
-  String Message1,Message2;
-  
-public : 
-  ScreenManager(byte SDA,byte SCL);
-  void setrgb(int r , int g , int b);
-  void show(int r , int g , int b,String Message1,String Message2);
-  void init();
-};
 
-class WifiManager {
-private:
-  const char* ssid;       // Wi-Fi's name
-  const char* password;   // Wi-Fi's password
 
-public:
-  // Construtor
-  WifiManager(const char* ssid, const char* password);
 
-  // Inicializa a conexão Wi-Fi
-  void init();
 
-  // Verifica se está conectado
-  bool isConnected();
 
-  // Retorna o endereço IP
-  String getIP();
-
-  // Reconecta ao Wi-Fi
-  void reconnect();
-};
-
-#endif // SMART_AIRPORT
+#endif

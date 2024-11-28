@@ -1,8 +1,7 @@
-#include "Smart_Airport.hpp"
-#include "Wifi_Access.hpp"
-#include <Servo.h>
+#include"projetv6.hpp"
+//#include "Wifi_Access.hpp"
 
-rgb_lcd lcd; // Initialisation de l'écran Grove LCD
+#include <Servo.h>
 Servo servoMotor;
 
 
@@ -49,31 +48,6 @@ void WifiManager::reconnect() {
     Serial.println("\nReconnected to Wi-Fi.");
   }
 }
-
-
-ScreenManager::ScreenManager(byte SDA,byte SCL):SDA(SDA),SCL(SCL){
-Wire.begin(SDA, SCL);
-};
-void ScreenManager::init(){
-lcd.begin(16, 2);
-ScreenManager::show (255,255,255,"Initializing...","Please wait!");
-ScreenManager::setrgb (0, 255, 0);
-}
-
-void ScreenManager::show (int r , int g , int b,String Message1="",String Message2=""){
-  lcd.clear();
-  ScreenManager::setrgb( r , g , b);
-  lcd.setCursor(0, 0); // Ligne 0, Colonne 0
-  lcd.print(Message1);
-  lcd.setCursor(0, 1); // Ligne 0, Colonne 1
-  lcd.print(Message2);
-  delay(3000);
-}
-
-void ScreenManager::setrgb(int r , int g , int b){
-  lcd.setRGB(r, g, b);
-}
-
 
 
 
@@ -123,6 +97,10 @@ void TemperatureHumiditySensor :: show(){
 bool TemperatureHumiditySensor :: isValidReading() {
   return !isnan(getTemperature()) && !isnan(getHumidity());
 }
+
+
+
+
 
 
 
@@ -194,13 +172,52 @@ void CapteurLuminosite :: afficherValeur(){
   Serial.print("Luminosité : ");
   Serial.println(valeurLuminosite);
 }
- 
-Button :: Button(int id, String type, byte pin) : Capteur(id, type, pin){}
+
+UltrasonicSensor :: UltrasonicSensor(int id, String type, byte pin) : Capteur(id, type, pin){}
+
+// Fonction pour mesurer la distance
+int UltrasonicSensor :: measureDistance() {
+  // Envoie une impulsion ultrasonique
+  pinMode(pin, OUTPUT);
+  digitalWrite(pin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pin, LOW);
   
-bool Button :: IsActivated(){
+  // Lit la durée de l'écho
+  pinMode(pin, INPUT);
+  unsigned long startTime = micros();
+  while (digitalRead(pin) == LOW) {
+    if (micros() - startTime > 30000) { // Timeout de 30 ms
+      return -1; // Retourne -1 si aucun signal reçu
+    }
+  }
+
+  unsigned long echoStart = micros();
+  while (digitalRead(pin) == HIGH) {
+    if (micros() - echoStart > 30000) { // Timeout si l'écho est trop long
+      return -1; // Retourne -1 pour signal trop long
+    }
+  }
+  unsigned long echoEnd = micros();
+  
+  // Calcule la durée et la distance
+  duration = echoEnd - echoStart;
+  distance = duration * 0.034 / 2;
+
+  return distance;
+}
+
+
+PushButton :: PushButton(int id, String type, byte pin) : Capteur(id, type, pin){}
+  
+bool PushButton :: IsActivated(){
   if (digitalRead(pin)==false){
     return true;
   }else{
     return false;
   }
 }   
+
+ 
