@@ -3,6 +3,9 @@
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
+#include <Wire.h>
+#include "rgb_lcd.h" // Bibliothèque dédiée au Grove LCD RGB Backlight
+#include "Adafruit_SHT31.h"
 
 // Définition de la classe de base Actuator
 class Actuator {
@@ -45,7 +48,6 @@ public:
   void setAngle(int angle);
 };
 
-
 class Capteur {
 protected:
   byte pin;
@@ -57,8 +59,6 @@ public:
   virtual void init(); //polymorphisme
   virtual float mesurer(); // Méthode virtuelle pure pour mesurer
   virtual void afficherValeur(); // Pour afficher la valeur sur l'écran
-  
-
 };
 
 class CapteurLuminosite : public Capteur {
@@ -83,8 +83,44 @@ public:
   bool IsActivated();
 };
 
+// Classe para gerenciar o sensor SHT31
+class TemperatureHumiditySensor {
+private:
+    Adafruit_SHT31 sht31; // Objeto interno da biblioteca Adafruit
+    byte i2cAddress;   // Endereço I2C do sensor
 
+public:
+  // Construtor para inicializar com o endereço I2C
+  TemperatureHumiditySensor(byte address);
 
+  // Inicializa o sensor
+  void init();
+  bool begin();
+
+  // Retorna a temperatura atual em Celsius
+  float getTemperature();
+
+   // Retorna a umidade atual em porcentagem
+  float getHumidity();
+
+  void show();
+
+  // Verifica se os valores são válidos
+  bool isValidReading();
+};
+
+class ScreenManager{
+private:
+  byte SDA,SCL;
+  int r,g,b;
+  String Message1,Message2;
+  
+public : 
+  ScreenManager(byte SDA,byte SCL);
+  void setrgb(int r , int g , int b);
+  void show(int r , int g , int b,String Message1,String Message2);
+  void init();
+};
 
 class WifiManager {
 private:
@@ -107,20 +143,5 @@ public:
   // Reconecta ao Wi-Fi
   void reconnect();
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif // SMART_AIRPORT

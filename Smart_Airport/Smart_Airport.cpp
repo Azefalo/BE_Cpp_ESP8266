@@ -2,6 +2,7 @@
 #include "Wifi_Access.hpp"
 #include <Servo.h>
 
+rgb_lcd lcd; // Initialisation de l'écran Grove LCD
 Servo servoMotor;
 
 
@@ -50,9 +51,78 @@ void WifiManager::reconnect() {
 }
 
 
+ScreenManager::ScreenManager(byte SDA,byte SCL):SDA(SDA),SCL(SCL){
+Wire.begin(SDA, SCL);
+};
+void ScreenManager::init(){
+lcd.begin(16, 2);
+ScreenManager::show (255,255,255,"Initializing...","Please wait!");
+ScreenManager::setrgb (0, 255, 0);
+}
+
+void ScreenManager::show (int r , int g , int b,String Message1="",String Message2=""){
+  lcd.clear();
+  ScreenManager::setrgb( r , g , b);
+  lcd.setCursor(0, 0); // Ligne 0, Colonne 0
+  lcd.print(Message1);
+  lcd.setCursor(0, 1); // Ligne 0, Colonne 1
+  lcd.print(Message2);
+  delay(3000);
+}
+
+void ScreenManager::setrgb(int r , int g , int b){
+  lcd.setRGB(r, g, b);
+}
 
 
 
+
+// Construtor para inicializar com o endereço I2C
+TemperatureHumiditySensor::TemperatureHumiditySensor(byte address = 0x44) : i2cAddress(address) {}
+
+// Inicializa o sensor
+void TemperatureHumiditySensor :: init(){
+  if (!TemperatureHumiditySensor::begin()) {
+    Serial.println("Échec de la communication avec le capteur SHT31.");
+    while (1) delay(1);  // Fica preso aqui em caso de erro
+  }
+}
+bool TemperatureHumiditySensor :: begin() {
+  return sht31.begin(i2cAddress);
+}
+
+// Retorna a temperatura atual em Celsius
+float TemperatureHumiditySensor :: getTemperature() {
+  return sht31.readTemperature();
+}
+
+// Retorna a umidade atual em porcentagem
+float TemperatureHumiditySensor :: getHumidity() {
+  return sht31.readHumidity();
+}
+
+void TemperatureHumiditySensor :: show(){
+  if (TemperatureHumiditySensor::isValidReading()) {
+    // Lê e exibe a temperatura
+    float temperature = TemperatureHumiditySensor::getTemperature();
+    Serial.print("Température: ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+
+    // Lê e exibe a umidade
+    float humidity = TemperatureHumiditySensor::getHumidity();
+    Serial.print("Humidité: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+  } else {
+    Serial.println("Erreur de lecture du capteur.");
+  }
+}
+
+// Verifica se os valores são válidos
+bool TemperatureHumiditySensor :: isValidReading() {
+  return !isnan(getTemperature()) && !isnan(getHumidity());
+}
 
 
 
