@@ -56,6 +56,7 @@ TemperatureHumiditySensor::TemperatureHumiditySensor(byte address = 0x44) : i2cA
 
 // Inicializa o sensor
 void TemperatureHumiditySensor :: init(){
+  Wire.begin();
   if (!TemperatureHumiditySensor::begin()) {
     Serial.println("Échec de la communication avec le capteur SHT31.");
     while (1) delay(1);  // Fica preso aqui em caso de erro
@@ -76,7 +77,7 @@ float TemperatureHumiditySensor :: getHumidity() {
 }
 
 void TemperatureHumiditySensor :: show(){
-  if (TemperatureHumiditySensor::isValidReading()) {
+  //if (TemperatureHumiditySensor::isValidReading()) {
     // Lê e exibe a temperatura
     float temperature = TemperatureHumiditySensor::getTemperature();
     Serial.print("Température: ");
@@ -88,9 +89,9 @@ void TemperatureHumiditySensor :: show(){
     Serial.print("Humidité: ");
     Serial.print(humidity);
     Serial.println(" %");
-  } else {
-    Serial.println("Erreur de lecture du capteur.");
-  }
+  //} else {
+  //  Serial.println("Erreur de lecture du capteur.");
+  //}
 }
 
 // Verifica se os valores são válidos
