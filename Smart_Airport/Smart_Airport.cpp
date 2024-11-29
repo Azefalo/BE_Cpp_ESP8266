@@ -56,11 +56,11 @@ Wire.begin(SDA, SCL);
 };
 void ScreenManager::init(){
 lcd.begin(16, 2);
-ScreenManager::show (255,255,255,"Initializing...","Please wait!");
+ScreenManager::show (255,255,255,"Init","Wait");
 ScreenManager::setrgb (0, 255, 0);
 }
 
-void ScreenManager::show (int r , int g , int b,String Message1="",String Message2=""){
+void ScreenManager::show (uint8_t  r , uint8_t  g , uint8_t  b,String Message1="",String Message2=""){
   lcd.clear();
   ScreenManager::setrgb( r , g , b);
   lcd.setCursor(0, 0); // Ligne 0, Colonne 0
@@ -70,7 +70,7 @@ void ScreenManager::show (int r , int g , int b,String Message1="",String Messag
   delay(3000);
 }
 
-void ScreenManager::setrgb(int r , int g , int b){
+void ScreenManager::setrgb(uint8_t r , uint8_t g , uint8_t b){
   lcd.setRGB(r, g, b);
 }
 

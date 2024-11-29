@@ -1,43 +1,35 @@
-#include <Arduino.h>
+#include <Wire.h>
+#include "Adafruit_SHT31.h"
 
-// Classe Buzzer
-class Buzzer {
-private:
-    int pin;
-
-public:
-    Buzzer(int buzzerPin) : pin(buzzerPin) {
-        pinMode(pin, OUTPUT);
-        digitalWrite(pin, LOW); // Buzzer inicia desligado
-    }
-
-    // Método para tocar um padrão de bipes
-    void playFireAlarmPattern(int shortBeepDuration, int shortBeepInterval, int pauseBetweenPatterns) {
-        for (int i = 0; i < 3; i++) { // Três bipes curtos
-            digitalWrite(pin, HIGH);
-            delay(shortBeepDuration);
-            digitalWrite(pin, LOW);
-            delay(shortBeepInterval);
-        }
-        delay(pauseBetweenPatterns); // Pausa entre os padrões
-    }
-};
-
-#define BUZZER_PIN D7 // Define o pino do buzzer
-Buzzer alarmBuzzer(BUZZER_PIN);
+// Inicializa o sensor SHT31
+Adafruit_SHT31 sht31 = Adafruit_SHT31();
 
 void setup() {
-    // Inicialização
-    Serial.begin(9600);
-    Serial.println("Sistema de Alarme de Incêndio Iniciado");
-    pinMode(LED_BUILTIN_AUX, INPUT);
+  Serial.begin(9600); // Inicializa a comunicação serial
+  Wire.begin();         // Inicializa o barramento I2C
+
+  if (!sht31.begin(0x44)) { // Endereço I2C padrão do sensor
+    Serial.println("Não foi possível encontrar o sensor SHT31");
+    while (1); // Se o sensor não for encontrado, para a execução
+  }
 }
 
 void loop() {
-    // Executa o padrão do alarme de incêndio
-    alarmBuzzer.playFireAlarmPattern(200, 100, 1000); // Ajuste dos tempos
-    digitalWrite(LED_BUILTIN_AUX, HIGH);
-    delay(500);
-    digitalWrite(LED_BUILTIN_AUX, LOW);
-    delay(500);
+  // Lê a temperatura e a umidade do sensor
+  float temperature = sht31.readTemperature();
+  float humidity = sht31.readHumidity();
+
+  if (!isnan(temperature) && !isnan(humidity)) { // Verifica se os valores são válidos
+    Serial.print("Temperatura: ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+
+    Serial.print("Umidade: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+  } else {
+    Serial.println("Falha ao ler os dados do sensor!");
+  }
+
+  delay(2000); // Aguarda 2 segundos antes de fazer a próxima leitura
 }

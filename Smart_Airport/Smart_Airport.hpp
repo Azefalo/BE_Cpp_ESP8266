@@ -7,6 +7,7 @@
 #include "rgb_lcd.h" // Bibliothèque dédiée au Grove LCD RGB Backlight
 #include "Adafruit_SHT31.h"
 
+
 // Définition de la classe de base Actuator
 class Actuator {
 protected:
@@ -125,8 +126,8 @@ private:
   
 public : 
   ScreenManager(byte SDA,byte SCL);
-  void setrgb(int r , int g , int b);
-  void show(int r , int g , int b,String Message1,String Message2);
+  void setrgb(uint8_t r, uint8_t g, uint8_t b);
+  void show(uint8_t r , uint8_t g , uint8_t b,String Message1,String Message2);
   void init();
 };
 

@@ -14,6 +14,6 @@ void loop() {
     delay(5000);
     alarmBuzzer.SetnoTone();
     // Exécute le motif de l'alarme incendie
-    alarmBuzzer.playFireAlarmPattern(200, 100, 1000); // Réglage des durées
+     
 
 }

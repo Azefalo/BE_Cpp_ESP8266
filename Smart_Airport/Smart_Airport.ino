@@ -12,7 +12,7 @@ ScreenManager screen(D2,D1);
 CapteurLuminosite lux(1 ,"Luminosité", LightSensorPin);
 Button emergencyButton(2, "Emergence Button", PushButtonPin);
 Button touchButton(3, "Lampe", TouchButtonPin);
-TemperatureHumiditySensor weatherSensor(D8);
+TemperatureHumiditySensor weatherSensor(0x44);
 
 
 // Variables pour le contrôle de l'angle
@@ -45,15 +45,18 @@ void loop() {
   // Mesures the light with the sensor and shows the amount of light detected
   lux.mesurer();
   lux.afficherValeur();
-
+  bool AlarmActivated = false;
   if (emergencyButton.IsActivated() == true){
+    AlarmActivated = true;
     lamp.on();
+    alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
   }
   else{
     lamp.off();
   delay(300);
   }
 
+/*
   weatherSensor.show();
 
   screen.show(0,255,0,"Hello, Grove!","RGB Backlight!");
@@ -61,6 +64,8 @@ void loop() {
   screen.setrgb(0,0,255);
 
   alarmBuzzer.playFireAlarmPattern(200, 100, 1000); // Réglage des durées
+*/
+
 
 /*
   // Fait tourner le servo de 0 à 180 degrés
