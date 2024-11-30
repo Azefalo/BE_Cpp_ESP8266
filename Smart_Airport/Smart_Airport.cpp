@@ -221,7 +221,7 @@ void CapteurLuminosite :: afficherValeur(){
 Button :: Button(int id, String type, byte pin) : Capteur(id, type, pin){}
   
 bool Button :: IsActivated(){
-  if (digitalRead(pin)==false){
+  if (digitalRead(pin)==true){
     return true;
   }else{
     return false;
