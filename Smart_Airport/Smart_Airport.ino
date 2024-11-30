@@ -31,7 +31,7 @@ void setup() {
   moteur.init();            // Inicialises the motor
   emergencyButton.init();   // Inicialises the push button
   touchButton.init();       // Inicialises the touch button
-  weatherSensor.init();     // Inicialises the weather sensor
+  //weatherSensor.init();     // Inicialises the weather sensor
   
 }
 
@@ -42,18 +42,19 @@ void loop() {
   lamp.off();
   delay(500);
 
-  // Mesures the light with the sensor and shows the amount of light detected
-  lux.mesurer();
-  lux.afficherValeur();
+
   bool AlarmActivated = false;
-  if (emergencyButton.IsActivated() == true){
+  if (emergencyButton.IsActivated() == true) {
     AlarmActivated = true;
     lamp.on();
-    alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
-  }
-  else{
+    screen.setrgb(255, 0, 0); // Configura a tela para vermelho
+    for(int i=0; i<10; i++){
+      alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
+    }
+  } else {
     lamp.off();
-  delay(300);
+    screen.setrgb(255, 255, 255); // Configura a tela para branco
+    delay(300);
   }
 
 /*
