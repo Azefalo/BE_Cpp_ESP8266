@@ -8,7 +8,7 @@ const char* password = "chatraule10";
 const char* mqttServer = "h1e3430a.ala.dedicated.aws.emqxcloud.com";
 const int mqttPort = 1883;
 const char* mqttUser = "pierrele123";
-const char* mqttPassword = "Ledragon123@";
+const char* mqttPassword = "projetairport";
 
 // Objets Wi-Fi et MQTT
 WifiManager wifiManager(ssid, password);
