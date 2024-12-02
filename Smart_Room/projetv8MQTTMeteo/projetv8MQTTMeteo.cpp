@@ -1,4 +1,4 @@
-#include"projetv8MQTT.hpp"
+#include"projetv8MQTTMeteo.hpp"
 //#include "Wifi_Access.hpp"
 
 #include <Wire.h>
@@ -181,6 +181,54 @@ void CapteurLuminosite :: afficherValeur(){
   Serial.println(valeurLuminosite);
 }
 
+// Construtor para inicializar com o endereço I2C
+TemperatureHumiditySensor::TemperatureHumiditySensor(byte address = 0x44) : i2cAddress(address) {}
+
+// Inicializa o sensor
+void TemperatureHumiditySensor :: init(){
+  Wire.begin();
+  if (!TemperatureHumiditySensor::begin()) {
+    Serial.println("Échec de la communication avec le capteur SHT31.");
+    while (1) delay(1);  // Fica preso aqui em caso de erro
+  }
+}
+bool TemperatureHumiditySensor :: begin() {
+  return sht31.begin(i2cAddress);
+}
+
+// Retorna a temperatura atual em Celsius
+float TemperatureHumiditySensor :: getTemperature() {
+  return sht31.readTemperature();
+}
+
+// Retorna a umidade atual em porcentagem
+float TemperatureHumiditySensor :: getHumidity() {
+  return sht31.readHumidity();
+}
+
+void TemperatureHumiditySensor :: show(){
+  //if (TemperatureHumiditySensor::isValidReading()) {
+    // Lê e exibe a temperatura
+    float temperature = TemperatureHumiditySensor::getTemperature();
+    Serial.print("Température: ");
+    Serial.print(temperature);
+    Serial.println(" °C");
+
+    // Lê e exibe a umidade
+    float humidity = TemperatureHumiditySensor::getHumidity();
+    Serial.print("Humidité: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+  //} else {
+  //  Serial.println("Erreur de lecture du capteur.");
+  //}
+}
+
+// Verifica se os valores são válidos
+bool TemperatureHumiditySensor :: isValidReading() {
+  return !isnan(getTemperature()) && !isnan(getHumidity());
+}
+
 UltrasonicSensor :: UltrasonicSensor(int id, String type, byte pin) : Capteur(id, type, pin){}
 
 // Fonction pour mesurer la distance
@@ -255,7 +303,6 @@ int UltrasonicSensor :: measureDistance() {
 //void MqttClient::loop() {
 //  client.loop();
 //}
-#include "projetv8MQTT.hpp"
 
 
 // Implémentation de MqttClient
@@ -267,7 +314,9 @@ MqttClient::MqttClient(const char* server, int port, const char* user, const cha
 void MqttClient::connectMQTT() {
     while (!mqttClient.connected()) {
         Serial.println("Connexion au serveur MQTT...");
-        if (mqttClient.connect("ESP8266Client", user, password)) {
+        String clientId = "ESP8266Client-";
+        clientId += String(random(0xffff), HEX);
+        if (mqttClient.connect(clientId.c_str(), user, password)) {
             Serial.println("Connecté au serveur MQTT !");
         } else {
             Serial.print("Échec, rc=");
@@ -277,9 +326,9 @@ void MqttClient::connectMQTT() {
     }
 }
 
-void MqttClient::publishData(const char* topic, float data) {
+void MqttClient::publishData(const char* topic, float data1,float data2) {
     char payload[50];
-    snprintf(payload, sizeof(payload), "%.2f", data);
+    snprintf(payload, sizeof(payload), "%.2f/%.2f", data1, data2);
     mqttClient.publish(topic, payload);
     Serial.print("Publié sur ");
     Serial.print(topic);
