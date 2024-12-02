@@ -1,6 +1,6 @@
-#include"projetv7.hpp"
+#include"projetv8MQTT.hpp"
 //#include "Wifi_Access.hpp"
-#include <PubSubClient.h> // Bibliothèque MQTT
+
 #include <Wire.h>
 #include "rgb_lcd.h" // Bibliothèque dédiée au Grove LCD RGB Backlight
 #include <Servo.h>
@@ -219,60 +219,76 @@ int UltrasonicSensor :: measureDistance() {
 
 
 
-MqttClient::MqttClient(const char* ssid, const char* password, const char* mqttServer, const int mqttPort, const char* mqttUser, const char* mqttPassword)
-    : ssid(ssid), password(password), mqttServer(mqttServer), mqttPort(mqttPort), mqttUser(mqttUser), mqttPassword(mqttPassword), client(espClient) {}
-
-//void MqttClient::connectWiFi() {
-//    Serial.print("Connexion au réseau Wi-Fi: ");
-//    Serial.print(ssid);
+//// Implémentation de MqttClient
+//MqttClient::MqttClient(const char* mqttServer, const int mqttPort, 
+//                       const char* mqttUser, const char* mqttPassword)
+//  : mqttServer(mqttServer), mqttPort(mqttPort),
+//    mqttUser(mqttUser), mqttPassword(mqttPassword), client(espClient) {}
 //
-//    WiFi.begin(ssid, password);
-//
-//    // Attendre la connexion
-//    while (WiFi.status() != WL_CONNECTED) {
-//        delay(1000);
-//        Serial.print(".");
+//void MqttClient::connectMQTT() {
+//  while (!client.connected()) {
+//    Serial.print("Tentative de connexion au serveur MQTT...");
+//    String clientId = "ESP8266Client-" + String(random(0xffff), HEX);
+//    if (client.connect(clientId.c_str(), mqttUser, mqttPassword)) {
+//      Serial.println("Connecté au serveur MQTT !");
+//    } else {
+//      Serial.print("Échec de la connexion, code d'erreur : ");
+//      Serial.println(client.state());
+//      delay(5000); // Attente avant une nouvelle tentative
 //    }
-//
-//    Serial.println();
-//    Serial.print("Connecté au Wi-Fi avec l'adresse IP: ");
-//    Serial.println(WiFi.localIP());
+//  }
 //}
+//
+//void MqttClient::publishData(const char* topic, float data) {
+//  char payload[50];
+//  snprintf(payload, sizeof(payload), "%.2f", data);
+//  if (client.publish(topic, payload)) {
+//    Serial.print("Données publiées sur le sujet : ");
+//    Serial.print(topic);
+//    Serial.print(" Valeur : ");
+//    Serial.println(payload);
+//  } else {
+//    Serial.println("Échec de la publication des données.");
+//  }
+//}
+//
+//void MqttClient::loop() {
+//  client.loop();
+//}
+#include "projetv8MQTT.hpp"
+
+
+// Implémentation de MqttClient
+MqttClient::MqttClient(const char* server, int port, const char* user, const char* password)
+    : server(server), port(port), user(user), password(password), mqttClient(wifiClient) {
+    mqttClient.setServer(server, port);
+}
 
 void MqttClient::connectMQTT() {
-    Serial.print("Connexion au serveur MQTT: ");
-    Serial.println(mqttServer);
-
-    // Tentative de connexion au serveur MQTT
-    while (!client.connected()) {
-        Serial.print("Tentative de connexion au serveur MQTT...");
-        
-        // Tentative de connexion avec utilisateur et mot de passe
-        if (client.connect("ESP8266Client", mqttUser, mqttPassword)) {
-            Serial.println("Connecté au serveur MQTT");
+    while (!mqttClient.connected()) {
+        Serial.println("Connexion au serveur MQTT...");
+        String clientId = "ESP8266Client-";
+        clientId += String(random(0xffff), HEX);
+        if (mqttClient.connect(clientId.c_str(), user, password)) {
+            Serial.println("Connecté au serveur MQTT !");
         } else {
-            Serial.print("Échec de la connexion, code d'erreur: ");
-            Serial.print(client.state());
-            delay(5000); // Attente avant de réessayer
+            Serial.print("Échec, rc=");
+            Serial.println(mqttClient.state());
+            delay(5000);
         }
     }
 }
 
 void MqttClient::publishData(const char* topic, float data) {
     char payload[50];
-    snprintf(payload, sizeof(payload), "%.2f", data);  // Convertir la donnée en chaîne avec 2 décimales
-    if (client.publish(topic, payload)) {
-        Serial.print("Données publiées sur le sujet: ");
-        Serial.print(topic);
-        Serial.print(" Valeur: ");
-        Serial.println(payload);
-    } else {
-        Serial.println("Échec de la publication des données.");
-    }
+    snprintf(payload, sizeof(payload), "%.2f", data);
+    mqttClient.publish(topic, payload);
+    Serial.print("Publié sur ");
+    Serial.print(topic);
+    Serial.print(" : ");
+    Serial.println(payload);
 }
 
 void MqttClient::loop() {
-    client.loop();  // Maintenir la connexion MQTT active
+    mqttClient.loop();
 }
-
- 

@@ -3,7 +3,7 @@
 #include <Arduino.h>
 //#include <Servo.h>
 #include <ESP8266WiFi.h>
-
+#include <PubSubClient.h> // Bibliothèque MQTT
 //using byte = uint8_t;
 
 //extern Servo servoMotor;    //  Sets servoMotor as a global variable
@@ -143,33 +143,42 @@ public:
 
 
 
+
+
+
+//// Classe MqttClient
+//class MqttClient {
+//private:
+//    const char* mqttServer;
+//    const int mqttPort;
+//    const char* mqttUser;
+//    const char* mqttPassword;
+//    WiFiClient espClient;
+//    PubSubClient client;
+//
+//public:
+//    MqttClient(const char* mqttServer, const int mqttPort, 
+//               const char* mqttUser, const char* mqttPassword);
+//    void connectMQTT();
+//    void publishData(const char* topic, float data);
+//    void loop();
+//};
+
+// Classe pour gérer MQTT
 class MqttClient {
 private:
-    const char* ssid;              // Nom du réseau Wi-Fi
-    const char* password;          // Mot de passe du réseau Wi-Fi
-    const char* mqttServer;        // Adresse du serveur MQTT
-    const int mqttPort;            // Port du serveur MQTT
-    const char* mqttUser;          // Utilisateur MQTT
-    const char* mqttPassword;      // Mot de passe MQTT
-    WiFiClient espClient;          // Objet pour la connexion Wi-Fi
-    PubSubClient client;           // Objet pour la gestion MQTT
+    const char* server;
+    const int port;
+    const char* user;
+    const char* password;
+    WiFiClient wifiClient;
+    PubSubClient mqttClient;
 
 public:
-    MqttClient(const char* ssid, const char* password, const char* mqttServer, const int mqttPort, const char* mqttUser, const char* mqttPassword);
-
-    // Connexion au serveur MQTT
+    MqttClient(const char* server, int port, const char* user, const char* password);
     void connectMQTT();
-
-    // Publier les données sur le serveur MQTT
     void publishData(const char* topic, float data);
-
-    // Fonction pour maintenir la connexion MQTT active
     void loop();
 };
 
-#endif // MQTTCLIENT_HPP
-
-
-
-
-#endif
+#endif // PROJETV8MQTT_HPP
