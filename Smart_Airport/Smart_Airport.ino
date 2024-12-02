@@ -46,16 +46,16 @@ void loop() {
   bool AlarmActivated = false;
   if (emergencyButton.IsActivated() == true) {
     AlarmActivated = true;
+  }
+  while(AlarmActivated == true){
     lamp.on();
     screen.setrgb(255, 0, 0); // Configura a tela para vermelho
-    for(int i=0; i<10; i++){
-      alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
-    }
-  } else {
-    lamp.off();
-    screen.setrgb(255, 255, 255); // Configura a tela para branco
-    delay(300);
+    alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
   }
+  lamp.off();
+  screen.setrgb(255, 255, 255); // Configura a tela para branco
+  delay(300);
+
 
 /*
   weatherSensor.show();
