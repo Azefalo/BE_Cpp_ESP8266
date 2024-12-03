@@ -10,8 +10,8 @@ const int DistanceSensorPin = D7;
 const int LightPin          = D8;
 const int BuzzerPin         = D9;
 // Informations réseau
-const char* ssid = "iPhone de PDS";
-const char* password = "chatraule10";
+const char* ssid = "Wifizinho";
+const char* password = "Senha123";
 
 // Informations MQTT
 const char* mqttServer = "h1e3430a.ala.dedicated.aws.emqxcloud.com";
@@ -49,6 +49,16 @@ MqttClient mqttClient(mqttServer, mqttPort, mqttUser, mqttPassword);
 //    delay(5000); // Publication toutes les 5 secondes
 //}
 
+void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
+    Serial.print("Message reçu sur le sujet : ");
+    Serial.println(topic);
+
+    Serial.print("Message : ");
+    for (unsigned int i = 0; i < length; i++) {
+        Serial.print((char)payload[i]);
+    }
+    Serial.println();
+}
 
 void setup() {
   Serial.begin(9600);  // Initialise la communication série
@@ -66,24 +76,31 @@ void setup() {
 void loop() {
    // Maintenir la connexion MQTT active
   mqttClient.loop();  
+ // S'assurer que l'abonnement est effectué une seule fois
+  static bool isSubscribed = false;
+  if (!isSubscribed) {
+        mqttClient.subscribeData("home/temperature", messageCallback);
+        isSubscribed = true; // Marque l'abonnement comme effectué
+  }
     // Vérifie si la lecture du capteur est valide et affiche les données
      // Exemple de publication des données
 //    float temperature = 25.5;  // Exemple de valeur statique
   bool AlarmActivated = false;
-  if (emergencyButton.IsActivated() == true) {
+  mqttClient.publishData("data",sensor.getTemperature(),sensor.getHumidity(),AlarmActivated);
+  if (emergencyButton.IsActivated() == true){
     AlarmActivated = true;
+  }
+  while(AlarmActivated == true){
+    mqttClient.publishData("data",sensor.getTemperature(),sensor.getHumidity(),AlarmActivated);
     screen.setrgb(255, 0, 0); // Configura a tela para vermelho
-    for(int i=0; i<10; i++){
-      alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
-    }
-  } else {
-    screen.setrgb(255, 255, 255); // Configura a tela para branco
-    delay(300);
+    alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
+    //if(Cloud_DesableAlarm == "1")
+    //  AlarmActivated = false;
   }
 
 
 
-  mqttClient.publishData("data",sensor.getTemperature(),sensor.getHumidity());
+  //mqttClient.publishData("data",sensor.getTemperature(),sensor.getHumidity());
 
 
   delay(2000);  // Attente de 2 secondes avant la prochaine lecture

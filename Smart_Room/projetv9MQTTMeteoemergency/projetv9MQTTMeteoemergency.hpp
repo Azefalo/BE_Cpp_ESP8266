@@ -204,7 +204,8 @@ private:
 public:
     MqttClient(const char* server, int port, const char* user, const char* password);
     void connectMQTT();
-    void publishData(const char* topic, float data1,float data2);
+    void publishData(const char* topic, float data1,float data2,bool data3);*
+    void subscribeData(const char* topic, MQTT_CALLBACK_SIGNATURE);
     void loop();
 };
 
@@ -216,4 +217,5 @@ public:
   
   bool IsActivated();
 };
+
 #endif 
