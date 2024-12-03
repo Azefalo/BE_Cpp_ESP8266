@@ -335,20 +335,18 @@ void MqttClient::publishData(const char* topic, float data1,float data2,bool dat
     Serial.print(" : ");
     Serial.println(payload);
 }
-void MqttClient::subscribeData(const char* topic, MQTT_CALLBACK_SIGNATURE) {
+// Abonnement à un sujet
+void MqttClient::subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int)) {
     mqttClient.setCallback(callback);
     mqttClient.subscribe(topic);
 
     Serial.print("Abonné au sujet : ");
     Serial.println(topic);
 }
+void MqttClient::loop() {
+    mqttClient.loop();
+}
 
-void MqttClient::loop() {
-    mqttClient.loop();
-}
-void MqttClient::loop() {
-    mqttClient.loop();
-}
 Button :: Button(int id, String type, byte pin) : Capteur(id, type, pin){}
   
 bool Button :: IsActivated(){

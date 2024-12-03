@@ -1,6 +1,5 @@
 #include "PROJETV9MQTTMeteoemergency.hpp"
-
-// Definition des pins of the ESP8266
+// Definition des pins de l' ESP8266
 
 const int LightSensorPin    = A0;
 const int MotorPin          = D3;
@@ -48,55 +47,65 @@ MqttClient mqttClient(mqttServer, mqttPort, mqttUser, mqttPassword);
 //
 //    delay(5000); // Publication toutes les 5 secondes
 //}
-
+// Variable globale pour l'état de l'alarme
+bool AlarmActivated = false; 
 void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
     Serial.print("Message reçu sur le sujet : ");
     Serial.println(topic);
 
-    Serial.print("Message : ");
+//    Serial.print("Message : ");
+//    for (unsigned int i = 0; i < length; i++) {
+//        Serial.print((char)payload[i]);
+//    }
+//    Serial.println();
+
+    // On lit le payload et on l'interprète
+    String message = "";
     for (unsigned int i = 0; i < length; i++) {
-        Serial.print((char)payload[i]);
+        message += (char)payload[i];
     }
-    Serial.println();
+
+    Serial.print("Message : ");
+    Serial.println(message);
+
+    // Exemple : si le message est "1", on active l'alarme
+    if (message == "1") {
+        AlarmActivated = false;
+    } else {
+        AlarmActivated = true;
+    }
 }
 
 void setup() {
   Serial.begin(9600);  // Initialise la communication série
    // Initialisation de la connexion Wi-Fi
   wifiManager.init();
-  alarmBuzzer.init();       // Inicialises the alarm
-  emergencyButton.init();   // Inicialises the push button
+  alarmBuzzer.init();       // Inicialisation de l'alarme
+  emergencyButton.init();   // Inicialisation du bouton poussoir 
   screen.init();
-    // Connexion au serveur MQTT
+  // Connexion au serveur MQTT
   mqttClient.connectMQTT();
-
+  mqttClient.subscribeData("alarmstop", messageCallback);
   sensor.init(); // Initialisation du capteur
 }
 
 void loop() {
-   // Maintenir la connexion MQTT active
-  mqttClient.loop();  
- // S'assurer que l'abonnement est effectué une seule fois
-  static bool isSubscribed = false;
-  if (!isSubscribed) {
-        mqttClient.subscribeData("home/temperature", messageCallback);
-        isSubscribed = true; // Marque l'abonnement comme effectué
-  }
-    // Vérifie si la lecture du capteur est valide et affiche les données
-     // Exemple de publication des données
-//    float temperature = 25.5;  // Exemple de valeur statique
-  bool AlarmActivated = false;
+
+
   mqttClient.publishData("data",sensor.getTemperature(),sensor.getHumidity(),AlarmActivated);
   if (emergencyButton.IsActivated() == true){
     AlarmActivated = true;
   }
   while(AlarmActivated == true){
+   // Maintenir la connexion MQTT active et vérifier le payload
+    mqttClient.loop(); 
     mqttClient.publishData("data",sensor.getTemperature(),sensor.getHumidity(),AlarmActivated);
-    screen.setrgb(255, 0, 0); // Configura a tela para vermelho
+    screen.setrgb(255, 0, 0); 
     alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
     //if(Cloud_DesableAlarm == "1")
     //  AlarmActivated = false;
   }
+  screen.setrgb(0, 255, 0);
 
 
 
