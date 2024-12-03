@@ -2,7 +2,7 @@
 #include "Smart_Airport.hpp"
 #include "ESP8266_Pins.hpp"
 
-WifiManager wifi(WiFi_ssid, WiFi_Password);
+WifiManager wifi("Wifizinho", "Senha123");
 
 Led lamp(LightPin);
 Led debugLight(LED_BUILTIN_AUX);
@@ -13,12 +13,9 @@ ScreenManager screen(D2,D1);
 CapteurLuminosite lux(1 ,"Luminosité", LightSensorPin);
 Button emergencyButton(2, "Emergence Button", PushButtonPin);
 Button touchButton(3, "Lampe", TouchButtonPin);
+UltrasonicSensor distanceSensor(7,"Ultrassonic",DistanceSensorPin);
 TemperatureHumiditySensor weatherSensor(0x44);
 
-
-// Variables pour le contrôle de l'angle
-int angle = 0;       // Angle initial
-int step = 10;       // Incrément de l'angle
 
 void setup() {
   Serial.begin(9600); // Inicialises the Serial Monitor for debugin
@@ -32,6 +29,7 @@ void setup() {
   moteur.init();            // Inicialises the motor
   emergencyButton.init();   // Inicialises the push button
   touchButton.init();       // Inicialises the touch button
+  
   //weatherSensor.init();     // Inicialises the weather sensor
 }
 
@@ -52,8 +50,10 @@ void loop() {
   moteur.setAngle(lux.mesurer()/10);
 
   // Function that detects the ultrasonic sensor (closer then 100cm) and sends a message to the screen ("Welcome to the airport")
+
   if (distanceSensor.mesurer() > 10 && distanceSensor.mesurer() < 100)
     screen.show(0, 0, 255, "Welcome to", airportName + " Airport");
+
    
 
 /*
