@@ -5,6 +5,7 @@
 WifiManager wifi(WiFi_ssid, WiFi_Password);
 
 Led lamp(LightPin);
+Led debugLight(LED_BUILTIN_AUX);
 Buzzer alarmBuzzer(BuzzerPin);
 MoteurToit moteur(MotorPin);
 ScreenManager screen(D2,D1);
@@ -37,24 +38,23 @@ void setup() {
 
 void loop() {
   // Tests the light activation
-  lamp.on();
-  delay(500);
-  lamp.off();
-  delay(500);
+  //lamp.on();
+  //delay(500);
+  //lamp.off();
+  //delay(500);
 
 
   bool AlarmActivated = false;
-  if (emergencyButton.IsActivated() == true) {
+  if (emergencyButton.IsActivated() == true)
     AlarmActivated = true;
-  }
   while(AlarmActivated == true){
-    lamp.on();
     screen.setrgb(255, 0, 0); // Configura a tela para vermelho
     alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
+    //if(Cloud_DesableAlarm == "1")
+    //  AlarmActivated = false;
   }
-  lamp.off();
   screen.setrgb(255, 255, 255); // Configura a tela para branco
-  delay(300);
+  
 
 
 /*
