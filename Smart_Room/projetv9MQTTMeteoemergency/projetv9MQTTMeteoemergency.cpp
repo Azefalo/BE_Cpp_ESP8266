@@ -326,16 +326,26 @@ void MqttClient::connectMQTT() {
     }
 }
 
-void MqttClient::publishData(const char* topic, float data1,float data2) {
+void MqttClient::publishData(const char* topic, float data1,float data2,bool data3) {
     char payload[50];
-    snprintf(payload, sizeof(payload), "%.2f/%.2f", data1, data2);
+    snprintf(payload, sizeof(payload), "%.2f/%.2f/%d", data1, data2, data3 ? 1 : 0);
     mqttClient.publish(topic, payload);
     Serial.print("Publié sur ");
     Serial.print(topic);
     Serial.print(" : ");
     Serial.println(payload);
 }
+void MqttClient::subscribeData(const char* topic, MQTT_CALLBACK_SIGNATURE) {
+    mqttClient.setCallback(callback);
+    mqttClient.subscribe(topic);
 
+    Serial.print("Abonné au sujet : ");
+    Serial.println(topic);
+}
+
+void MqttClient::loop() {
+    mqttClient.loop();
+}
 void MqttClient::loop() {
     mqttClient.loop();
 }
