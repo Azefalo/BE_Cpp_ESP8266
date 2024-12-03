@@ -33,16 +33,9 @@ void setup() {
   emergencyButton.init();   // Inicialises the push button
   touchButton.init();       // Inicialises the touch button
   //weatherSensor.init();     // Inicialises the weather sensor
-  
 }
 
 void loop() {
-  // Tests the light activation
-  //lamp.on();
-  //delay(500);
-  //lamp.off();
-  //delay(500);
-
 
   bool AlarmActivated = false;
   if (emergencyButton.IsActivated() == true)
@@ -55,6 +48,9 @@ void loop() {
   }
   screen.setrgb(255, 255, 255); // Configura a tela para branco
   
+  // Function that reads the light sensor and sets the angle of the motor
+  moteur.setAngle(lux.mesurer()/10);
+
 
 
 /*
