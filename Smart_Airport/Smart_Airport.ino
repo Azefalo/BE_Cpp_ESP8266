@@ -52,8 +52,7 @@ void loop() {
   moteur.setAngle(lux.mesurer()/10);
 
   // Function that detects the ultrasonic sensor (closer then 100cm) and sends a message to the screen ("Welcome to the airport")
-  if (distanceSensor.mesurer() < 100)
-    String airportName = "Toulouse";
+  if (distanceSensor.mesurer() > 10 && distanceSensor.mesurer() < 100)
     screen.show(0, 0, 255, "Welcome to", airportName + " Airport");
    
 
