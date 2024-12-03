@@ -92,6 +92,43 @@ public:
   bool IsActivated();
 };
 
+class UltrasonicSensor : public Capteur{
+private:
+  //byte signalPin; // Broche de signal pour le capteur
+  long duration; // Durée de l'impulsion ultrasonique
+  int distance;  // Distance calculée
+
+public:
+  // Constructeur pour initialiser la broche
+  UltrasonicSensor(int id, String type, byte pin);
+
+  // Fonction pour mesurer la distance
+  int measureDistance();
+};
+
+class WifiManager {
+private:
+  const char* ssid;       // Wi-Fi's name
+  const char* password;   // Wi-Fi's password
+
+public:
+  // Construtor
+  WifiManager(const char* ssid, const char* password);
+
+  // Inicializa a conexão Wi-Fi
+  void init();
+
+  // Verifica se está conectado
+  bool isConnected();
+
+  // Retorna o endereço IP
+  String getIP();
+
+  // Reconecta ao Wi-Fi
+  void reconnect();
+};
+
+
 // Classe para gerenciar o sensor SHT31
 class TemperatureHumiditySensor {
 private:
@@ -129,28 +166,6 @@ public :
   void setrgb(uint8_t r, uint8_t g, uint8_t b);
   void show(uint8_t r , uint8_t g , uint8_t b,String Message1,String Message2);
   void init();
-};
-
-class WifiManager {
-private:
-  const char* ssid;       // Wi-Fi's name
-  const char* password;   // Wi-Fi's password
-
-public:
-  // Construtor
-  WifiManager(const char* ssid, const char* password);
-
-  // Inicializa a conexão Wi-Fi
-  void init();
-
-  // Verifica se está conectado
-  bool isConnected();
-
-  // Retorna o endereço IP
-  String getIP();
-
-  // Reconecta ao Wi-Fi
-  void reconnect();
 };
 
 #endif // SMART_AIRPORT
