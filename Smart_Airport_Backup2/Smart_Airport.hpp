@@ -1,214 +1,142 @@
 #ifndef SMART_AIRPORT_HPP
-#define SMARTI_AIRPORT_HPP
+#define SMART_AIRPORT_HPP
 
-#include <Arduino.h>
-#include <ESP8266WiFi.h>
-#include <Wire.h>
-#include "rgb_lcd.h" // Bibliothèque dédiée au Grove LCD RGB Backlight
-#include "Adafruit_SHT31.h"
-#include <PubSubClient.h> // Bibliothèque MQTT
-#include <stdexcept> // Biblioteca para exceções
+#include <Arduino.h>          // Arduino Core Library
+#include <ESP8266WiFi.h>      // Library for ESP8266 Wi-Fi Module
+#include <Wire.h>             // Library for I2C communication
+#include "rgb_lcd.h"          // Library for Grove LCD RGB Backlight
+#include "Adafruit_SHT31.h"   // Library for Adafruit SHT31 Temperature and Humidity Sensor
+#include <PubSubClient.h>     // MQTT Library
+#include <stdexcept>          // Library for exceptions
 
-
-void Inicialization();
+void Initialization(); 
 void messageCallback(char* topic, uint8_t* payload, unsigned int length);
 void Fire_Alarm_Check();
 void Windows_Automatic_Open_Close();
 void Light_Automatic_On_Off();
 void Airplane_In_Gate_Check();
-void Wifi_Conected_Check();
-
+void Wifi_Connected_Check();
 
 class WifiManager {
 private:
   const char* ssid;       // Wi-Fi's name
   const char* password;   // Wi-Fi's password
-
 public:
-  // Construtor
   WifiManager(const char* ssid, const char* password);
-
-  // Inicializa a conexão Wi-Fi
   void init();
-
-  // Verifica se está conectado
   bool isConnected();
-
-  // Retorna o endereço IP
   String getIP();
-
-  // Reconecta ao Wi-Fi
   void reconnect();
 };
 
+class ScreenManager {
+private:
+  byte SDA;
+  byte SCL;
+public:
+  ScreenManager(byte SDA, byte SCL);
+  void init();
+  void show(uint8_t r, uint8_t g, uint8_t b, String Message1 = "", String Message2 = "");
+  void setrgb(uint8_t r, uint8_t g, uint8_t b);
+};
 
-// Classe para gerenciar o sensor SHT31
+class MqttClient {
+private:
+  const char* server;
+  int port;
+  const char* user;
+  const char* password;
+  WiFiClient wifiClient;
+  PubSubClient mqttClient;
+public:
+  MqttClient(const char* server, int port, const char* user, const char* password);
+  void connectMQTT();
+  void publishData(const char* topic, float data1, float data2, bool data3);
+  void subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int));
+  void loop();
+};
+
 class TemperatureHumiditySensor {
 private:
-    Adafruit_SHT31 sht31; // Objeto interno da biblioteca Adafruit
-    byte i2cAddress;   // Endereço I2C do sensor
-
+  byte i2cAddress;
+  Adafruit_SHT31 sht31;
 public:
-  // Construtor para inicializar com o endereço I2C
-  TemperatureHumiditySensor(byte address);
-
-  // Inicializa o sensor
+  TemperatureHumiditySensor(byte address = 0x44);
   void init();
   bool begin();
-
-  // Retorna a temperatura atual em Celsius
   float getTemperature();
-
-   // Retorna a umidade atual em porcentagem
   float getHumidity();
-
   void show();
-
-  // Verifica se os valores são válidos
   bool isValidReading();
 };
 
-class ScreenManager{
-private:
-  byte SDA,SCL;
-  int r,g,b;
-  String Message1,Message2;
-  
-public : 
-  ScreenManager(byte SDA,byte SCL);
-  void setrgb(uint8_t r, uint8_t g, uint8_t b);
-  void show(uint8_t r , uint8_t g , uint8_t b,String Message1,String Message2);
-  void init();
-};
-
-// Classe pour gérer MQTT
-class MqttClient {
-private:
-    const char* server;
-    const int port;
-    const char* user;
-    const char* password;
-    WiFiClient wifiClient;
-    PubSubClient mqttClient;
-
-public:
-    MqttClient(const char* server, int port, const char* user, const char* password);
-    void connectMQTT();
-    void publishData(const char* topic, float data1,float data2,bool data3);
-    void subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int));
-    void loop();
-};
-
-
-// Définition de la classe de base Actuator
 class Actuator {
 protected:
-  byte pin;  // Pin utilisée par l'actionneur
-
+  byte pin;
 public:
-  // Constructeur pour initialiser la pin de l'actionneur
   Actuator(byte pin);
-   // Méthode d'initialisation de la pin en mode OUTPUT
-  virtual void init(); //polymorphisme
-   // Méthode pour accéder à la pin (si nécessaire pour d'autres actions)
+  void init();
   byte getPin() const;
 };
 
-// Définition de la classe Led dérivée de Actuator
 class Led : public Actuator {
 public:
-  // Constructeur de la classe Led qui appelle le constructeur de la classe Actuator
   Led(byte pin);
-
-  // Méthode pour allumer la LED
   void on();
-
-  // Méthode pour éteindre la LED
   void off();
 };
 
 class Buzzer : public Actuator {
 public:
-    Buzzer(byte pin); // Le constructeur utilise simplement l'attribut pin de la classe Actuator
-    void playFireAlarmPattern(int shortBeepDuration, int shortBeepInterval, int pauseBetweenPatterns);
-    void SetTone();
-    void SetnoTone();
+  Buzzer(byte pin);
+  void playFireAlarmPattern(int shortBeepDuration, int shortBeepInterval, int pauseBetweenPatterns);
+  void SetTone();
+  void SetnoTone();
 };
 
-// Définition de la classe servomoteur dérivée de Actuator
 class MoteurToit : public Actuator {
-private: int angle;
+private:
+  Servo servoMotor;
 public:
-  // Constructeur de la classe servomoteur qui appelle le constructeur de la classe Actuator
   MoteurToit(byte pin);
-
-  // Méthode d'initialisation du moteur
-  void init() override;
-
-  // Méthode pour définir l'angle du mote
+  void init();
   void setAngle(int angle);
 };
 
-class Capteur {
+class Sensor {
 protected:
   byte pin;
   int id;
   String type;
-
 public:
-  Capteur(int id, String type, byte pin);
-  virtual void init(); //polymorphisme
-  virtual float mesurer(); // Méthode virtuelle pure pour mesurer
-  virtual void afficherValeur(); // Pour afficher la valeur sur l'écran
+  Sensor(int id, String type, byte pin);
+  virtual void init();
+  virtual float measure();
+  virtual void displayValue();
 };
 
-class CapteurLuminosite : public Capteur {
+class LightSensor : public Sensor {
 private:
-  int valeurLuminosite;
-
+  float lightValue;
 public:
-  CapteurLuminosite(int id, String type, byte pin);
-
-  float mesurer();
-
-  void afficherValeur();
+  LightSensor(int id, String type, byte pin);
+  float measure();
+  void displayValue();
 };
 
-class Button : public Capteur{
-private:
-  bool Activated;
+class Button : public Sensor {
 public:
   Button(int id, String type, byte pin);
-  
   bool IsActivated();
 };
 
-class UltrasonicSensor : public Capteur{
+class UltrasonicSensor : public Sensor {
 private:
-  long duration; // Durée de l'impulsion ultrasonique
-  int distance;  // Distance calculée
-
+  unsigned long duration;
+  float distance;
 public:
-  // Constructeur pour initialiser la broche
   UltrasonicSensor(int id, String type, byte pin);
-
-  // Fonction pour mesurer la distance
   int measureDistance();
 };
 
-extern WifiManager wifi;
-extern MqttClient mqttClient;
-extern ScreenManager screen;
-// Actuators
-extern Led lamp;
-extern Led debugLight;
-extern Buzzer alarmBuzzer;
-extern MoteurToit moteur;
-// Sensors
-extern CapteurLuminosite lux;
-extern Button emergencyButton;
-extern Button touchButton;
-extern UltrasonicSensor distanceSensor;
-extern TemperatureHumiditySensor weatherSensor;
-
-#endif // SMART_AIRPORT
+#endif // SMART_AIRPORT_HPP
