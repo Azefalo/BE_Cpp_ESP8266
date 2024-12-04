@@ -1,8 +1,12 @@
 #include "Smart_Airport.hpp"
-#include "Smart_Airport.ino.globals.h"
+#include "Smart_Airport_Backup2.ino.globals.h"
 #include "credentials.hpp"
 #include "ESP8266_Pins.hpp"
 #include <Servo.h>
+
+# define PIN_ERROR 0
+# define DISTANCE_TROP_CURTE -5
+# define DISTANCE_TROP_LONG -2
 
 rgb_lcd lcd; // Initialisation de l'écran Grove LCD
 Servo servoMotor;
@@ -20,11 +24,13 @@ void Inicialization(){
     wifi.init();         // Inicialises the Wi-Fi
     weatherSensor.init();    // Inicialises the weather sensor
     distanceSensor.init();
-    // Connexion au serveur MQTT
-    mqttClient.connectMQTT();
+
   } catch (const std::runtime_error& e) {
     Serial.println(e.what());
   }
+  
+  // Connexion au serveur MQTT
+  mqttClient.connectMQTT();
   mqttClient.subscribeData("alarmstop", messageCallback);
 }
 
@@ -34,19 +40,19 @@ WifiManager::WifiManager(const char* ssid, const char* password) : ssid(ssid), p
 // Inicialises the Wi-Fi conection
 void WifiManager::init() {
   WiFi.begin(ssid, password);
-  Serial.print("\n\nConnecting to Wi-Fi");
+  //Serial.print("\n\nConnecting to Wi-Fi");
   unsigned long startAttemptTime = millis();
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    //Serial.print(".");
     if (millis() - startAttemptTime > 10000) { // Timeout de 10 segundos
       throw std::runtime_error("Wi-Fi connection timed out.");
     }
   }
-  Serial.println("\nWi-Fi connected.");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
+  //Serial.println("\nWi-Fi connected.");
+  //Serial.print("IP address: ");
+  //Serial.println(WiFi.localIP());
 }
 
 // Verifica se está conectado ao Wi-Fi
@@ -66,14 +72,14 @@ String WifiManager::getIP() {
 // Reconects the Wi-Fi if the conection is lost
 void WifiManager::reconnect() {
   if (!isConnected()) {
-    Serial.println("Reconnecting to Wi-Fi...");
+    //Serial.println("Reconnecting to Wi-Fi...");
     WiFi.disconnect();
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
-      Serial.print(".");
+      //Serial.print(".");
     }
-    Serial.println("\nReconnected to Wi-Fi.");
+    //Serial.println("\nReconnected to Wi-Fi.");
   }
 }
 
@@ -109,13 +115,14 @@ MqttClient::MqttClient(const char* server, int port, const char* user, const cha
 
 void MqttClient::connectMQTT() {
     while (!mqttClient.connected()) {
-        Serial.println("Connexion au serveur MQTT...");
+        //Serial.println("Connexion au serveur MQTT...");
         String clientId = "ESP8266Client-";
         clientId += String(random(0xffff), HEX);
         if (mqttClient.connect(clientId.c_str(), user, password)) {
-            Serial.println("Connecté au serveur MQTT !");
+            //Serial.println("Connecté au serveur MQTT !");
         } else {
-            throw std::runtime_error("Mqtt connection timed out.");
+            //Serial.print("Échec, rc=");
+            //Serial.println(mqttClient.state());
             delay(5000);
         }
     }
@@ -125,18 +132,18 @@ void MqttClient::publishData(const char* topic, float data1,float data2,bool dat
     char payload[50];
     snprintf(payload, sizeof(payload), "%.2f/%.2f/%d", data1, data2, data3 ? 1 : 0);
     mqttClient.publish(topic, payload);
-    Serial.print("Publié sur ");
-    Serial.print(topic);
-    Serial.print(" : ");
-    Serial.println(payload);
+    //Serial.print("Publié sur ");
+    //Serial.print(topic);
+    //Serial.print(" : ");
+    //Serial.println(payload);
 }
 // Abonnement à un sujet
 void MqttClient::subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int)) {
     mqttClient.setCallback(callback);
     mqttClient.subscribe(topic);
 
-    Serial.print("Abonné au sujet : ");
-    Serial.println(topic);
+    //Serial.print("Abonné au sujet : ");
+    //Serial.println(topic);
 }
 void MqttClient::loop() {
     mqttClient.loop();
@@ -145,16 +152,16 @@ void MqttClient::loop() {
 
 bool AlarmActivated = false; 
 void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
-    Serial.print("Message reçu sur le sujet : ");
-    Serial.println(topic);
+    //Serial.print("Message reçu sur le sujet : ");
+    //Serial.println(topic);
     // On lit le payload et on l'interprète
     String message = "";
     for (unsigned int i = 0; i < length; i++) {
         message += (char)payload[i];
     }
 
-    Serial.print("Message : ");
-    Serial.println(message);
+    //Serial.print("Message : ");
+    //Serial.println(message);
 
     // Si le message est "1", on active l'alarme
     if (message == "1") {
@@ -184,20 +191,17 @@ void Windows_Automatic_Open_Close() {
   moteur.setAngle(lux.mesurer()/10);
 }
 
-bool LampActivated = false; // Variável global para rastrear o estado da lâmpada
-void Light_Automatic_On_Off() {
-  // Lê o valor do sensor de luminosidade
-  int lightLevel = lux.mesurer();
-  
-  // Verifica as condições para ativar ou desativar a lâmpada
-  if (lightLevel < 200 || touchButton.IsActivated()) {
-    if (!LampActivated) { // Só liga se ainda não estiver ligada
-      LampActivated = true;
-      lamp.on();
-    }
-  } else if (LampActivated && !touchButton.IsActivated() && lightLevel > 200) {
-    LampActivated = false; // Só desliga se estava ligada
+void Light_Automatic_On_Off(){
+  // Turns on or off the airport lights acording to the inside light
+  bool LampActivated = false;
+  if (lux.mesurer() < 200 || touchButton.IsActivated()) {
+    LampActivated = true;
+    lamp.on();
+    delay(500);
+  } else if ((LampActivated == true && touchButton.IsActivated()) || lux.mesurer() > 200 ) {
+    LampActivated = false;
     lamp.off();
+    delay(500);
   }
 }
 
@@ -205,19 +209,22 @@ bool AirplaneInGate = false;
 void Airplane_In_Gate_Check(){
   // Lê a distância do sensor
   int measuredDistance = distanceSensor.measureDistance();
+  //Serial.print("Distance measured: ");
+  //Serial.println(measuredDistance);
+  delay(500);
 
   // Verifica se o avião está no portão (distância entre 5 e 60 cm)
   if (measuredDistance > 5 && measuredDistance < 60) {
     if (!AirplaneInGate) { // Avião acaba de chegar
       AirplaneInGate = true; // Atualiza o estado para "avião presente"
-      Serial.println("Airplane Detected!");
+      //Serial.println("Airplane Detected!");
       screen.show(0, 0, 255, "Welcome to", "Toulouse Airport");
       delay(2000);
     }
   } else { // Avião saiu do portão (distância fora do intervalo)
     if (AirplaneInGate) { // Avião estava presente, mas saiu
       AirplaneInGate = false; // Atualiza o estado para "sem avião"
-      Serial.println("Airplane Left!");
+      //Serial.println("Airplane Left!");
     }
   }
 }
