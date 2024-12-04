@@ -1,34 +1,10 @@
 #include "Smart_Airport.hpp"
-#include "Smart_Airport.ino.globals.h"
-
 #include "Wifi_Access.hpp"
-#include "ESP8266_Pins.hpp"
 #include <Servo.h>
-
-# define PIN_ERROR 0
-# define DISTANCE_TROP_CURTE -5
-# define DISTANCE_TROP_LONG -2
 
 rgb_lcd lcd; // Initialisation de l'écran Grove LCD
 Servo servoMotor;
 
-void Inicialization(){
-  try{
-    wifi.init();         // Inicialises the Wi-Fi
-    weatherSensor.init();    // Inicialises the weather sensor
-    distanceSensor.init();
-
-  } catch (const std::runtime_error& e) {
-    Serial.println(e.what());
-  }
-  lamp.init();         // Inicialises the lamp
-  alarmBuzzer.init();  // Inicialises the alarm
-  screen.init();
-  lux.init();              // Inicialises the light sensor
-  moteur.init();           // Inicialises the motor
-  emergencyButton.init();  // Inicialises the push button
-  touchButton.init();      // Inicialises the touch button
-}
 
 // Construtor
 WifiManager::WifiManager(const char* ssid, const char* password) : ssid(ssid), password(password) {}
@@ -37,14 +13,9 @@ WifiManager::WifiManager(const char* ssid, const char* password) : ssid(ssid), p
 void WifiManager::init() {
   WiFi.begin(ssid, password);
   Serial.print("\n\nConnecting to Wi-Fi");
-  unsigned long startAttemptTime = millis();
-
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-    if (millis() - startAttemptTime > 10000) { // Timeout de 10 segundos
-      throw std::runtime_error("Wi-Fi connection timed out.");
-    }
   }
   Serial.println("\nWi-Fi connected.");
   Serial.print("IP address: ");
@@ -81,12 +52,12 @@ void WifiManager::reconnect() {
 
 
 ScreenManager::ScreenManager(byte SDA,byte SCL):SDA(SDA),SCL(SCL){
-  Wire.begin(SDA, SCL);
+Wire.begin(SDA, SCL);
 };
 void ScreenManager::init(){
-  lcd.begin(16, 2);
-  ScreenManager::show (255,255,255,"Init","Wait");
-  ScreenManager::setrgb (0, 255, 0);
+lcd.begin(16, 2);
+ScreenManager::show (255,255,255,"Init","Wait");
+ScreenManager::setrgb (0, 255, 0);
 }
 
 void ScreenManager::show (uint8_t  r , uint8_t  g , uint8_t  b,String Message1="",String Message2=""){
@@ -112,7 +83,8 @@ TemperatureHumiditySensor::TemperatureHumiditySensor(byte address = 0x44) : i2cA
 // Inicializa o sensor
 void TemperatureHumiditySensor :: init(){
   if (!TemperatureHumiditySensor::begin()) {
-    throw std::runtime_error("Échec de la communication avec le capteur SHT31.");
+    Serial.println("Échec de la communication avec le capteur SHT31.");
+    while (1) delay(1);  // Fica preso aqui em caso de erro
   }
 }
 bool TemperatureHumiditySensor :: begin() {
@@ -152,7 +124,9 @@ bool TemperatureHumiditySensor :: isValidReading() {
   return !isnan(getTemperature()) && !isnan(getHumidity());
 }
 
-// Constructeur pour initialiser la pin de l'actionneur
+
+
+// Constructeur de la classe Actuator
 Actuator::Actuator(byte pin):pin(pin){}
 
 // Méthode d'initialisation de la pin en mode OUTPUT
@@ -183,13 +157,13 @@ Buzzer::Buzzer(byte pin) : Actuator(pin) {}
 
 // Méthode pour jouer un motif d'alarme
 void Buzzer::playFireAlarmPattern(int shortBeepDuration, int shortBeepInterval, int pauseBetweenPatterns) {
-  for (int i = 0; i < 3; i++) {    // Trois bips courts
-    digitalWrite(getPin(), HIGH);  // Utilise getPin() pour récupérer la broche
-    delay(shortBeepDuration);
-    digitalWrite(getPin(), LOW);  // Utilise getPin()
-    delay(shortBeepInterval);
-  }
-  delay(pauseBetweenPatterns);  // Pause entre les motifs
+    for (int i = 0; i < 3; i++) { // Trois bips courts
+        digitalWrite(getPin(), HIGH); // Utilise getPin() pour récupérer la broche
+        delay(shortBeepDuration);
+        digitalWrite(getPin(), LOW); // Utilise getPin()
+        delay(shortBeepInterval);
+    }
+    delay(pauseBetweenPatterns); // Pause entre les motifs
 }
 
 // Méthode pour activer un son continu
@@ -259,6 +233,7 @@ UltrasonicSensor :: UltrasonicSensor(int id, String type, byte pin) : Capteur(id
 // Fonction pour mesurer la distance
 int UltrasonicSensor :: measureDistance() {
   // Envoie une impulsion ultrasonique
+  pinMode(pin, OUTPUT);
   digitalWrite(pin, LOW);
   delayMicroseconds(2);
   digitalWrite(pin, HIGH);
@@ -270,14 +245,14 @@ int UltrasonicSensor :: measureDistance() {
   unsigned long startTime = micros();
   while (digitalRead(pin) == LOW) {
     if (micros() - startTime > 30000) { // Timeout de 30 ms
-      return DISTANCE_TROP_CURTE; // Retourne -1 si aucun signal reçu
+      return -2; // Retourne -1 si aucun signal reçu
     }
   }
 
   unsigned long echoStart = micros();
   while (digitalRead(pin) == HIGH) {
     if (micros() - echoStart > 30000) { // Timeout si l'écho est trop long
-      return DISTANCE_TROP_LONG; // Retourne -1 pour signal trop long
+      return -5; // Retourne -1 pour signal trop long
     }
   }
   unsigned long echoEnd = micros();

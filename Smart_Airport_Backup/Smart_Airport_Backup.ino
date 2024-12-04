@@ -2,33 +2,39 @@
 #include "Smart_Airport.hpp"
 #include "ESP8266_Pins.hpp"
 
-// This function is a copy of the lines 8 to 19 to test if everithing
-// is well defined and there is no error in the pins definition
-void Pins_Exception_Test();
 
 WifiManager wifi("Wifizinho", "Senha123");
 ScreenManager screen(D2, D1);
-// Actuators
+
 Led lamp(LightPin);
 Led debugLight(LED_BUILTIN_AUX);
 Buzzer alarmBuzzer(BuzzerPin);
 MoteurToit moteur(MotorPin);
-// Sensors
-CapteurLuminosite lux(1, "Luminosity", LightSensorPin);
-Button emergencyButton(2, "Emergency Button", PushButtonPin);
+
+CapteurLuminosite lux(1, "Luminosité", LightSensorPin);
+Button emergencyButton(2, "Emergence Button", PushButtonPin);
 Button touchButton(3, "Lampe", TouchButtonPin);
-UltrasonicSensor distanceSensor(7, "Ultrasonic", DistanceSensorPin);
+UltrasonicSensor distanceSensor(7, "Ultrassonic", DistanceSensorPin);
 TemperatureHumiditySensor weatherSensor(0x44);
+
+
 
 void setup() {
   Serial.begin(9600); // Inicialises the Serial Monitor for debugin
   delay(100);
-  
-  Inicialization();
 
+  wifi.init();              // Inicialises the Wi-Fi
+  lamp.init();              // Inicialises the lamp
+  alarmBuzzer.init();       // Inicialises the alarm
+  screen.init();
+  lux.init();               // Inicialises the light sensor
+  moteur.init();            // Inicialises the motor
+  emergencyButton.init();   // Inicialises the push button
+  touchButton.init();       // Inicialises the touch button
+  
+  //weatherSensor.init();     // Inicialises the weather sensor
   screen.show(0, 255, 0, "Inicialized with", "success!");
   delay(1000);
-  screen.setrgb(255, 255, 255);
 }
 
 void loop() {
@@ -77,7 +83,7 @@ void loop() {
   
 
   if (AirplaneInGate) {
-    // Mensage to the screen
+    // Shows the whether
   }
 
 

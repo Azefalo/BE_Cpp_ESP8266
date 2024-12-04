@@ -1,16 +1,11 @@
 #ifndef SMART_AIRPORT_HPP
 #define SMARTI_AIRPORT_HPP
 
-
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <Wire.h>
 #include "rgb_lcd.h" // Bibliothèque dédiée au Grove LCD RGB Backlight
 #include "Adafruit_SHT31.h"
-#include <stdexcept> // Biblioteca para exceções
-
-
-void Inicialization();
 
 
 // Définition de la classe de base Actuator
@@ -77,6 +72,7 @@ public:
 
 class CapteurLuminosite : public Capteur {
 private:
+  //int pin;
   int valeurLuminosite;
 
 public:
@@ -98,6 +94,7 @@ public:
 
 class UltrasonicSensor : public Capteur{
 private:
+  //byte signalPin; // Broche de signal pour le capteur
   long duration; // Durée de l'impulsion ultrasonique
   int distance;  // Distance calculée
 
@@ -170,19 +167,5 @@ public :
   void show(uint8_t r , uint8_t g , uint8_t b,String Message1,String Message2);
   void init();
 };
-
-extern WifiManager wifi;
-extern ScreenManager screen;
-// Actuators
-extern Led lamp;
-extern Led debugLight;
-extern Buzzer alarmBuzzer;
-extern MoteurToit moteur;
-// Sensors
-extern CapteurLuminosite lux;
-extern Button emergencyButton;
-extern Button touchButton;
-extern UltrasonicSensor distanceSensor;
-extern TemperatureHumiditySensor weatherSensor;
 
 #endif // SMART_AIRPORT
