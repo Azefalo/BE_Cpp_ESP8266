@@ -71,8 +71,6 @@ void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
     // Exemple : si le message est "1", on active l'alarme
     if (message == "1") {
         AlarmActivated = false;
-    } else {
-        AlarmActivated = true;
     }
 }
 
@@ -91,7 +89,8 @@ void setup() {
 
 void loop() {
 
-
+  // Maintenir la connexion MQTT active et vérifier le payload
+  mqttClient.loop(); 
   mqttClient.publishData("data",sensor.getTemperature(),sensor.getHumidity(),AlarmActivated);
   if (emergencyButton.IsActivated() == true){
     AlarmActivated = true;
