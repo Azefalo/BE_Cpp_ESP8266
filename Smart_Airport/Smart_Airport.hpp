@@ -1,7 +1,6 @@
 #ifndef SMART_AIRPORT_HPP
 #define SMARTI_AIRPORT_HPP
 
-
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <Wire.h>
@@ -12,6 +11,93 @@
 
 
 void Inicialization();
+void messageCallback(char* topic, uint8_t* payload, unsigned int length);
+void Fire_Alarm_Check();
+void Windows_Automatic_Open_Close();
+void Light_Automatic_On_Off();
+void Airplane_In_Gate_Check();
+void Wifi_Conected_Check();
+
+
+class WifiManager {
+private:
+  const char* ssid;       // Wi-Fi's name
+  const char* password;   // Wi-Fi's password
+
+public:
+  // Construtor
+  WifiManager(const char* ssid, const char* password);
+
+  // Inicializa a conexão Wi-Fi
+  void init();
+
+  // Verifica se está conectado
+  bool isConnected();
+
+  // Retorna o endereço IP
+  String getIP();
+
+  // Reconecta ao Wi-Fi
+  void reconnect();
+};
+
+
+// Classe para gerenciar o sensor SHT31
+class TemperatureHumiditySensor {
+private:
+    Adafruit_SHT31 sht31; // Objeto interno da biblioteca Adafruit
+    byte i2cAddress;   // Endereço I2C do sensor
+
+public:
+  // Construtor para inicializar com o endereço I2C
+  TemperatureHumiditySensor(byte address);
+
+  // Inicializa o sensor
+  void init();
+  bool begin();
+
+  // Retorna a temperatura atual em Celsius
+  float getTemperature();
+
+   // Retorna a umidade atual em porcentagem
+  float getHumidity();
+
+  void show();
+
+  // Verifica se os valores são válidos
+  bool isValidReading();
+};
+
+class ScreenManager{
+private:
+  byte SDA,SCL;
+  int r,g,b;
+  String Message1,Message2;
+  
+public : 
+  ScreenManager(byte SDA,byte SCL);
+  void setrgb(uint8_t r, uint8_t g, uint8_t b);
+  void show(uint8_t r , uint8_t g , uint8_t b,String Message1,String Message2);
+  void init();
+};
+
+// Classe pour gérer MQTT
+class MqttClient {
+private:
+    const char* server;
+    const int port;
+    const char* user;
+    const char* password;
+    WiFiClient wifiClient;
+    PubSubClient mqttClient;
+
+public:
+    MqttClient(const char* server, int port, const char* user, const char* password);
+    void connectMQTT();
+    void publishData(const char* topic, float data1,float data2,bool data3);
+    void subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int));
+    void loop();
+};
 
 
 // Définition de la classe de base Actuator
@@ -109,89 +195,6 @@ public:
   // Fonction pour mesurer la distance
   int measureDistance();
 };
-
-class WifiManager {
-private:
-  const char* ssid;       // Wi-Fi's name
-  const char* password;   // Wi-Fi's password
-
-public:
-  // Construtor
-  WifiManager(const char* ssid, const char* password);
-
-  // Inicializa a conexão Wi-Fi
-  void init();
-
-  // Verifica se está conectado
-  bool isConnected();
-
-  // Retorna o endereço IP
-  String getIP();
-
-  // Reconecta ao Wi-Fi
-  void reconnect();
-};
-
-
-// Classe para gerenciar o sensor SHT31
-class TemperatureHumiditySensor {
-private:
-    Adafruit_SHT31 sht31; // Objeto interno da biblioteca Adafruit
-    byte i2cAddress;   // Endereço I2C do sensor
-
-public:
-  // Construtor para inicializar com o endereço I2C
-  TemperatureHumiditySensor(byte address);
-
-  // Inicializa o sensor
-  void init();
-  bool begin();
-
-  // Retorna a temperatura atual em Celsius
-  float getTemperature();
-
-   // Retorna a umidade atual em porcentagem
-  float getHumidity();
-
-  void show();
-
-  // Verifica se os valores são válidos
-  bool isValidReading();
-};
-
-class ScreenManager{
-private:
-  byte SDA,SCL;
-  int r,g,b;
-  String Message1,Message2;
-  
-public : 
-  ScreenManager(byte SDA,byte SCL);
-  void setrgb(uint8_t r, uint8_t g, uint8_t b);
-  void show(uint8_t r , uint8_t g , uint8_t b,String Message1,String Message2);
-  void init();
-};
-
-// Classe pour gérer MQTT
-class MqttClient {
-private:
-    const char* server;
-    const int port;
-    const char* user;
-    const char* password;
-    WiFiClient wifiClient;
-    PubSubClient mqttClient;
-
-public:
-    MqttClient(const char* server, int port, const char* user, const char* password);
-    void connectMQTT();
-    void publishData(const char* topic, float data1,float data2,bool data3);
-    void subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int));
-    void loop();
-};
-
-void messageCallback(char* topic, uint8_t* payload, unsigned int length);
-void Fire_Alarm();
 
 extern WifiManager wifi;
 extern MqttClient mqttClient;

@@ -168,7 +168,7 @@ void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
         AlarmActivated = false;
     }
 }
-void Fire_Alarm(){
+void Fire_Alarm_Check(){
   // Maintenir la connexion MQTT active et vérifier le payload
   mqttClient.loop(); 
   mqttClient.publishData("data",weatherSensor.getTemperature(),weatherSensor.getHumidity(),AlarmActivated);
@@ -186,7 +186,55 @@ void Fire_Alarm(){
   delay(2000);
 }
 
+void Windows_Automatic_Open_Close() {
+  // Function that reads the light sensor and sets the angle of the motor
+  moteur.setAngle(lux.mesurer()/10);
+}
 
+void Light_Automatic_On_Off(){
+  // Turns on or off the airport lights acording to the inside light
+  bool LampActivated = false;
+  if (lux.mesurer() < 200 || touchButton.IsActivated()) {
+    LampActivated = true;
+    lamp.on();
+    delay(500);
+  } else if ((LampActivated == true && touchButton.IsActivated()) || lux.mesurer() > 200 ) {
+    LampActivated = false;
+    lamp.off();
+    delay(500);
+  }
+}
+
+bool AirplaneInGate = false;
+void Airplane_In_Gate_Check(){
+  // Lê a distância do sensor
+  int measuredDistance = distanceSensor.measureDistance();
+  Serial.print("Distance measured: ");
+  Serial.println(measuredDistance);
+  delay(500);
+
+  // Verifica se o avião está no portão (distância entre 5 e 60 cm)
+  if (measuredDistance > 5 && measuredDistance < 60) {
+    if (!AirplaneInGate) { // Avião acaba de chegar
+      AirplaneInGate = true; // Atualiza o estado para "avião presente"
+      Serial.println("Airplane Detected!");
+      screen.show(0, 0, 255, "Welcome to", "Toulouse Airport");
+      delay(2000);
+    }
+  } else { // Avião saiu do portão (distância fora do intervalo)
+    if (AirplaneInGate) { // Avião estava presente, mas saiu
+      AirplaneInGate = false; // Atualiza o estado para "sem avião"
+      Serial.println("Airplane Left!");
+    }
+  }
+}
+
+void Wifi_Conected_Check(){
+  // Verifies the Wi-Fi conection
+  if (!wifi.isConnected()) {
+    wifi.reconnect();
+  }
+}
 
 // Construtor para inicializar com o endereço I2C
 TemperatureHumiditySensor::TemperatureHumiditySensor(byte address = 0x44) : i2cAddress(address) {}
