@@ -12,6 +12,14 @@ rgb_lcd lcd; // Initialisation de l'écran Grove LCD
 Servo servoMotor;
 
 void Inicialization(){
+  lamp.init();         // Inicialises the lamp
+  alarmBuzzer.init();  // Inicialises the alarm
+  screen.init();
+  lux.init();              // Inicialises the light sensor
+  moteur.init();           // Inicialises the motor
+  emergencyButton.init();  // Inicialises the push button
+  touchButton.init();      // Inicialises the touch button
+  
   try{
     wifi.init();         // Inicialises the Wi-Fi
     weatherSensor.init();    // Inicialises the weather sensor
@@ -20,13 +28,7 @@ void Inicialization(){
   } catch (const std::runtime_error& e) {
     Serial.println(e.what());
   }
-  lamp.init();         // Inicialises the lamp
-  alarmBuzzer.init();  // Inicialises the alarm
-  screen.init();
-  lux.init();              // Inicialises the light sensor
-  moteur.init();           // Inicialises the motor
-  emergencyButton.init();  // Inicialises the push button
-  touchButton.init();      // Inicialises the touch button
+  
   // Connexion au serveur MQTT
   mqttClient.connectMQTT();
   mqttClient.subscribeData("alarmstop", messageCallback);
@@ -87,8 +89,7 @@ ScreenManager::ScreenManager(byte SDA,byte SCL):SDA(SDA),SCL(SCL){
 };
 void ScreenManager::init(){
   lcd.begin(16, 2);
-  ScreenManager::show (255,255,255,"Init","Wait");
-  ScreenManager::setrgb (0, 255, 0);
+  ScreenManager::show (255,128,0,"Initialising ...","Please Wait");
 }
 
 void ScreenManager::show (uint8_t  r , uint8_t  g , uint8_t  b,String Message1="",String Message2=""){
@@ -153,7 +154,6 @@ bool AlarmActivated = false;
 void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
     Serial.print("Message reçu sur le sujet : ");
     Serial.println(topic);
-
     // On lit le payload et on l'interprète
     String message = "";
     for (unsigned int i = 0; i < length; i++) {
@@ -162,8 +162,8 @@ void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
 
     Serial.print("Message : ");
     Serial.println(message);
-    screen.show(255,255,0,message,"");
-    // Exemple : si le message est "1", on active l'alarme
+
+    // Si le message est "1", on active l'alarme
     if (message == "1") {
         AlarmActivated = false;
     }
@@ -172,16 +172,17 @@ void Fire_Alarm(){
   // Maintenir la connexion MQTT active et vérifier le payload
   mqttClient.loop(); 
   mqttClient.publishData("data",weatherSensor.getTemperature(),weatherSensor.getHumidity(),AlarmActivated);
-  if (emergencyButton.IsActivated() == true)
+  if (emergencyButton.IsActivated() == true){
     AlarmActivated = true;
-  while(AlarmActivated == true){
-    // Maintenir la connexion MQTT active et vérifier le payload
-    mqttClient.loop(); 
-    mqttClient.publishData("data",weatherSensor.getTemperature(),weatherSensor.getHumidity(),AlarmActivated);
-    screen.setrgb(255, 0, 0); 
-    alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
+    while(AlarmActivated == true){
+      // Maintenir la connexion MQTT active et vérifier le payload
+      mqttClient.loop(); 
+      mqttClient.publishData("data",weatherSensor.getTemperature(),weatherSensor.getHumidity(),AlarmActivated);
+      screen.show (255,16,0,"Atention! fire","alarm activated");
+      alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
+    }
+    screen.show (0,255,0,"Fire alarm","Desactivated");
   }
-  screen.setrgb(0, 255, 0);
   delay(2000);
 }
 
@@ -340,6 +341,7 @@ UltrasonicSensor :: UltrasonicSensor(int id, String type, byte pin) : Capteur(id
 // Fonction pour mesurer la distance
 int UltrasonicSensor :: measureDistance() {
   // Envoie une impulsion ultrasonique
+  pinMode(pin, OUTPUT);
   digitalWrite(pin, LOW);
   delayMicroseconds(2);
   digitalWrite(pin, HIGH);
@@ -351,14 +353,14 @@ int UltrasonicSensor :: measureDistance() {
   unsigned long startTime = micros();
   while (digitalRead(pin) == LOW) {
     if (micros() - startTime > 30000) { // Timeout de 30 ms
-      return DISTANCE_TROP_CURTE; // Retourne -1 si aucun signal reçu
+      return -1; // Retourne -1 si aucun signal reçu
     }
   }
 
   unsigned long echoStart = micros();
   while (digitalRead(pin) == HIGH) {
     if (micros() - echoStart > 30000) { // Timeout si l'écho est trop long
-      return DISTANCE_TROP_LONG; // Retourne -1 pour signal trop long
+      return -1; // Retourne -1 pour signal trop long
     }
   }
   unsigned long echoEnd = micros();

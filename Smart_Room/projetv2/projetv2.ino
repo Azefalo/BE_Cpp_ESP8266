@@ -1,6 +1,6 @@
 #include "projetv2.hpp"
 // Broche de contrôle du servo
-const int servoPin = D5;
+const int servoPin = D3;
 
 // Variables pour le contrôle de l'angle
 int angle = 0;       // Angle initial
