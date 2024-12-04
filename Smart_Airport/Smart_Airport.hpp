@@ -7,6 +7,7 @@
 #include <Wire.h>
 #include "rgb_lcd.h" // Bibliothèque dédiée au Grove LCD RGB Backlight
 #include "Adafruit_SHT31.h"
+#include <PubSubClient.h> // Bibliothèque MQTT
 #include <stdexcept> // Biblioteca para exceções
 
 
@@ -171,7 +172,29 @@ public :
   void init();
 };
 
+// Classe pour gérer MQTT
+class MqttClient {
+private:
+    const char* server;
+    const int port;
+    const char* user;
+    const char* password;
+    WiFiClient wifiClient;
+    PubSubClient mqttClient;
+
+public:
+    MqttClient(const char* server, int port, const char* user, const char* password);
+    void connectMQTT();
+    void publishData(const char* topic, float data1,float data2,bool data3);
+    void subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int));
+    void loop();
+};
+
+void messageCallback(char* topic, uint8_t* payload, unsigned int length);
+void Fire_Alarm();
+
 extern WifiManager wifi;
+extern MqttClient mqttClient;
 extern ScreenManager screen;
 // Actuators
 extern Led lamp;

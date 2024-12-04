@@ -1,7 +1,6 @@
 #include "Smart_Airport.hpp"
 #include "Smart_Airport.ino.globals.h"
-
-#include "Wifi_Access.hpp"
+#include "credentials.hpp"
 #include "ESP8266_Pins.hpp"
 #include <Servo.h>
 
@@ -28,6 +27,9 @@ void Inicialization(){
   moteur.init();           // Inicialises the motor
   emergencyButton.init();  // Inicialises the push button
   touchButton.init();      // Inicialises the touch button
+  // Connexion au serveur MQTT
+  mqttClient.connectMQTT();
+  mqttClient.subscribeData("alarmstop", messageCallback);
 }
 
 // Construtor
@@ -103,6 +105,84 @@ void ScreenManager::setrgb(uint8_t r , uint8_t g , uint8_t b){
   lcd.setRGB(r, g, b);
 }
 
+
+// Implémentation de MqttClient
+MqttClient::MqttClient(const char* server, int port, const char* user, const char* password)
+    : server(server), port(port), user(user), password(password), mqttClient(wifiClient) {
+    mqttClient.setServer(server, port);
+}
+
+void MqttClient::connectMQTT() {
+    while (!mqttClient.connected()) {
+        Serial.println("Connexion au serveur MQTT...");
+        String clientId = "ESP8266Client-";
+        clientId += String(random(0xffff), HEX);
+        if (mqttClient.connect(clientId.c_str(), user, password)) {
+            Serial.println("Connecté au serveur MQTT !");
+        } else {
+            Serial.print("Échec, rc=");
+            Serial.println(mqttClient.state());
+            delay(5000);
+        }
+    }
+}
+
+void MqttClient::publishData(const char* topic, float data1,float data2,bool data3) {
+    char payload[50];
+    snprintf(payload, sizeof(payload), "%.2f/%.2f/%d", data1, data2, data3 ? 1 : 0);
+    mqttClient.publish(topic, payload);
+    Serial.print("Publié sur ");
+    Serial.print(topic);
+    Serial.print(" : ");
+    Serial.println(payload);
+}
+// Abonnement à un sujet
+void MqttClient::subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int)) {
+    mqttClient.setCallback(callback);
+    mqttClient.subscribe(topic);
+
+    Serial.print("Abonné au sujet : ");
+    Serial.println(topic);
+}
+void MqttClient::loop() {
+    mqttClient.loop();
+}
+
+
+bool AlarmActivated = false; 
+void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
+    Serial.print("Message reçu sur le sujet : ");
+    Serial.println(topic);
+    // On lit le payload et on l'interprète
+    String message = "";
+    for (unsigned int i = 0; i < length; i++) {
+        message += (char)payload[i];
+    }
+
+    Serial.print("Message : ");
+    Serial.println(message);
+
+    // Si le message est "1", on active l'alarme
+    if (message == "1") {
+        AlarmActivated = false;
+    }
+}
+void Fire_Alarm(){
+  // Maintenir la connexion MQTT active et vérifier le payload
+  mqttClient.loop(); 
+  mqttClient.publishData("data",weatherSensor.getTemperature(),weatherSensor.getHumidity(),AlarmActivated);
+  if (emergencyButton.IsActivated() == true)
+    AlarmActivated = true;
+  while(AlarmActivated == true){
+    // Maintenir la connexion MQTT active et vérifier le payload
+    mqttClient.loop(); 
+    mqttClient.publishData("data",weatherSensor.getTemperature(),weatherSensor.getHumidity(),AlarmActivated);
+    screen.setrgb(255, 0, 0); 
+    alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
+  }
+  screen.setrgb(0, 255, 0);
+  delay(2000);
+}
 
 
 

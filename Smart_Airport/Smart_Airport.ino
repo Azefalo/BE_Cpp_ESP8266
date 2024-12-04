@@ -1,12 +1,9 @@
-#include "Wifi_Access.hpp"
+#include "credentials.hpp"
 #include "Smart_Airport.hpp"
 #include "ESP8266_Pins.hpp"
 
-// This function is a copy of the lines 8 to 19 to test if everithing
-// is well defined and there is no error in the pins definition
-void Pins_Exception_Test();
-
 WifiManager wifi("Wifizinho", "Senha123");
+MqttClient mqttClient(mqttServer, mqttPort, mqttUser, mqttPassword);
 ScreenManager screen(D2, D1);
 // Actuators
 Led lamp(LightPin);
@@ -33,16 +30,7 @@ void setup() {
 
 void loop() {
 
-  bool AlarmActivated = false;
-  if (emergencyButton.IsActivated() == true)
-    AlarmActivated = true;
-  while(AlarmActivated == true){
-    screen.setrgb(255, 0, 0); // Configura a tela para vermelho
-    alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
-    //if(Cloud_DesableAlarm == "1")
-    //  AlarmActivated = false;
-  }
-  screen.setrgb(255, 255, 255); // Configura a tela para branco
+  Fire_Alarm();
   
   // Function that reads the light sensor and sets the angle of the motor
   moteur.setAngle(lux.mesurer()/10);
