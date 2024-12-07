@@ -156,11 +156,13 @@ void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
     
     Serial.print("Message : ");
     Serial.println(receivedMessage);
-    screen.show(255, 255, 0, receivedMessage, "");
-
+    
     // Si le message est "1", on active l'alarme
     if (receivedMessage == "1") {
         AlarmActivated = false;
+    } else{
+      ATC_Message=receivedMessage;
+      screen.show(255, 255, 0, receivedMessage, "");
     }
 }
 void Fire_Alarm_Check(){
@@ -203,12 +205,22 @@ void Light_Automatic_On_Off() {
   }
 }
 
+void updateDisplay() {
+    String temperature = String(weatherSensor.getTemperature(),1);
+    String humidity = String(weatherSensor.getHumidity(),1);
+
+    // Construire la deuxième ligne de texte
+    String infoLine = "T:" + temperature + "oC H:" + humidity + "%";
+
+    // Afficher les informations sur l'écran
+    screen.show(255, 255, 255, ATC_Message, infoLine);
+}
+
 bool AirplaneInGate = false;
 void Airplane_In_Gate_Check(){
   // Lê a distância do sensor
   int measuredDistance = distanceSensor.measureDistance();
-  screen.show(255, 255, 255, ATC_Message,"T:    H:");
-
+  updateDisplay();
   // Verifica se o avião está no portão (distância entre 5 e 60 cm)
   if (measuredDistance > 5 && measuredDistance < 60) {
     if (!AirplaneInGate) { // Avião acaba de chegar
@@ -221,7 +233,7 @@ void Airplane_In_Gate_Check(){
     if (AirplaneInGate) { // Avião estava presente, mas saiu
       AirplaneInGate = false; // Atualiza o estado para "sem avião"
       ATC_Message = "";
-      screen.show(255, 255, 255, "", "");
+      screen.show(255, 255, 255, ATC_Message,"");
       Serial.println("Airplane Left!");
     }
   }

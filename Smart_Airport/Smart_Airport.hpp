@@ -9,7 +9,7 @@
 #include <PubSubClient.h> // Bibliothèque MQTT
 #include <stdexcept> // Biblioteca para exceções
 
-
+void updateDisplay();
 void Inicialization();
 void messageCallback(char* topic, uint8_t* payload, unsigned int length);
 void Fire_Alarm_Check();
