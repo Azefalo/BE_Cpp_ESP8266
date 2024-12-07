@@ -29,6 +29,8 @@ void setup() {
 }
 
 void loop() {
+  // Maintenir la connexion MQTT active et vérifier le payload
+  mqttClient.loop(); 
   screen.show (255,255,255,"","");
 
   Airplane_In_Gate_Check();

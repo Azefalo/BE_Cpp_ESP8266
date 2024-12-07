@@ -155,7 +155,7 @@ void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
 
     Serial.print("Message : ");
     Serial.println(message);
-
+    screen.show(255,255,0,message,"");
     // Si le message est "1", on active l'alarme
     if (message == "1") {
         AlarmActivated = false;
