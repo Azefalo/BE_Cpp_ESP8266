@@ -18,7 +18,7 @@ void Light_Automatic_On_Off();
 void Airplane_In_Gate_Check();
 void Wifi_Conected_Check();
 
-
+//extern String ATC_Message = "";
 class WifiManager {
 private:
   const char* ssid;       // Wi-Fi's name

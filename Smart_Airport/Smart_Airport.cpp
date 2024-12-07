@@ -3,10 +3,11 @@
 #include "credentials.hpp"
 #include "ESP8266_Pins.hpp"
 #include <Servo.h>
+extern String ATC_Message = "";
 
 rgb_lcd lcd; // Initialisation de l'écran Grove LCD
 Servo servoMotor;
-
+//String ATC_Message = "";
 void Inicialization(){
   lamp.init();         // Inicialises the lamp
   alarmBuzzer.init();  // Inicialises the alarm
@@ -148,16 +149,17 @@ void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
     Serial.print("Message reçu sur le sujet : ");
     Serial.println(topic);
     // On lit le payload et on l'interprète
-    String message = "";
+    String receivedMessage = "";
     for (unsigned int i = 0; i < length; i++) {
-        message += (char)payload[i];
+        receivedMessage += (char)payload[i];
     }
-
+    
     Serial.print("Message : ");
-    Serial.println(message);
-    screen.show(255,255,0,message,"");
+    Serial.println(receivedMessage);
+    screen.show(255, 255, 0, receivedMessage, "");
+
     // Si le message est "1", on active l'alarme
-    if (message == "1") {
+    if (receivedMessage == "1") {
         AlarmActivated = false;
     }
 }
@@ -176,7 +178,7 @@ void Fire_Alarm_Check(){
     }
     screen.show (0,255,0,"Fire alarm","Desactivated");
   }
-  delay(2000);
+  delay(1000);
 }
 
 void Windows_Automatic_Open_Close() {
@@ -205,6 +207,7 @@ bool AirplaneInGate = false;
 void Airplane_In_Gate_Check(){
   // Lê a distância do sensor
   int measuredDistance = distanceSensor.measureDistance();
+  screen.show(255, 255, 255, ATC_Message,"T:    H:");
 
   // Verifica se o avião está no portão (distância entre 5 e 60 cm)
   if (measuredDistance > 5 && measuredDistance < 60) {
@@ -217,6 +220,8 @@ void Airplane_In_Gate_Check(){
   } else { // Avião saiu do portão (distância fora do intervalo)
     if (AirplaneInGate) { // Avião estava presente, mas saiu
       AirplaneInGate = false; // Atualiza o estado para "sem avião"
+      ATC_Message = "";
+      screen.show(255, 255, 255, "", "");
       Serial.println("Airplane Left!");
     }
   }
