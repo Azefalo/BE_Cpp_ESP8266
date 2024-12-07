@@ -139,26 +139,27 @@ void MqttClient::subscribeData(const char* topic, void (*callback)(char*, uint8_
 }
 
 void MqttClient::loop() {
-    mqttClient.loop();
+  mqttClient.loop();
 }
 
 bool AlarmActivated = false; 
-void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
-    Serial.print("Message received on topic: ");
-    Serial.println(topic);
-    // Read and interpret the payload
-    String message = "";
-    for (unsigned int i = 0; i < length; i++) {
-        message += (char)payload[i];
-    }
+String messageCallback(char* topic, uint8_t* payload, unsigned int length) {
+  Serial.print("Message received on topic: ");
+  Serial.println(topic);
+  // Read and interpret the payload
+  String message = "";
+  for (unsigned int i = 0; i < length; i++) {
+    message += (char)payload[i];
+  }
 
-    Serial.print("Message: ");
-    Serial.println(message);
+  Serial.print("Message: ");
+  Serial.println(message);
 
-    // If the message is "1", deactivate the alarm
-    if (message == "1") {
-        AlarmActivated = false;
-    }
+  // If the message is "1", deactivate the alarm
+  if (message == "1") {
+    AlarmActivated = false;
+  }
+  return message
 }
 
 void Fire_Alarm_Check() {

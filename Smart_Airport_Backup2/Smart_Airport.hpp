@@ -10,7 +10,7 @@
 #include <stdexcept>          // Library for exceptions
 
 void Initialization(); 
-void messageCallback(char* topic, uint8_t* payload, unsigned int length);
+String messageCallback(char* topic, uint8_t* payload, unsigned int length);
 void Fire_Alarm_Check();
 void Windows_Automatic_Open_Close();
 void Light_Automatic_On_Off();

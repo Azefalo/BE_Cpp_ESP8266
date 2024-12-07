@@ -34,7 +34,7 @@ void setup() {
 
 void loop() {
   screen.show(255, 255, 255, "", "");
-
+  
   Airplane_In_Gate_Check();
   Fire_Alarm_Check();
   Windows_Automatic_Open_Close();
