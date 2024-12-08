@@ -162,7 +162,7 @@ void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
         AlarmActivated = false;
     } else{
       ATC_Message=receivedMessage;
-      screen.show(255, 255, 0, receivedMessage, "");
+      screen.show(255, 255, 0, "     Update     ", receivedMessage);
     }
 }
 void Fire_Alarm_Check(){
