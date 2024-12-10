@@ -17,7 +17,6 @@ Button touchButton(3, "Lampe", TouchButtonPin);
 UltrasonicSensor distanceSensor(7, "Ultrasonic", DistanceSensorPin);
 TemperatureHumiditySensor weatherSensor(0x44);
 
-
 void setup() {
   Serial.begin(9600); // Inicialises the Serial Monitor for debugin
   delay(100);
@@ -29,8 +28,9 @@ void setup() {
 }
 
 void loop() {
-  screen.show (255,255,255,"","");
-
+  // Maintenir la connexion MQTT active et vérifier le payload
+  mqttClient.loop(); 
+  //screen.show (255,255,255,"","");
   Airplane_In_Gate_Check();
   Fire_Alarm_Check();
   Windows_Automatic_Open_Close();
