@@ -8,6 +8,7 @@
 #include "Adafruit_SHT31.h"   // Library for Adafruit SHT31 Temperature and Humidity Sensor
 #include <PubSubClient.h>     // MQTT Library
 #include <stdexcept>          // Library for exceptions
+#include <vector>             // Library for vectors
 
 void Initialization(); 
 String messageCallback(char* topic, uint8_t* payload, unsigned int length);

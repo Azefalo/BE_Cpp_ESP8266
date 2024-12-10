@@ -7,22 +7,15 @@ extern String ATC_Message = "";
 
 rgb_lcd lcd; // Initialisation de l'écran Grove LCD
 Servo servoMotor;
-
-std::vector<Sensor*> sensors = {&lux, &emergencyButton, &touchButton};
-std::vector<Actuator*> actuator = {&lamp, &debugLight, &alarmBuzzer, &moteur};
-
-
-void Initialization() {
+//String ATC_Message = "";
+void Inicialization(){
+  lamp.init();         // Inicialises the lamp
+  alarmBuzzer.init();  // Inicialises the alarm
   screen.init();
-
-  // Initialize all sensors
-  for (auto sensor : sensors) {
-    sensor->init();
-  }
-  // Initialize all actuators
-  for (auto actuator : actuators) {
-    actuator->init();
-  }
+  lux.init();              // Inicialises the light sensor
+  moteur.init();           // Inicialises the motor
+  emergencyButton.init();  // Inicialises the push button
+  touchButton.init();      // Inicialises the touch button
   
   try{
     wifi.init();         // Inicialises the Wi-Fi

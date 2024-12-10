@@ -6,14 +6,21 @@
 rgb_lcd lcd; // Initialization of the Grove LCD
 Servo servoMotor;
 
+std::vector<Sensor*> sensors = {&lux, &emergencyButton, &touchButton};
+std::vector<Actuator*> actuator = {&lamp, &debugLight, &alarmBuzzer, &moteur};
+
+
 void Initialization() {
-  lamp.init();         // Initializes the lamp
-  alarmBuzzer.init();  // Initializes the alarm
   screen.init();
-  lux.init();              // Initializes the light sensor
-  moteur.init();           // Initializes the motor
-  emergencyButton.init();  // Initializes the push button
-  touchButton.init();      // Initializes the touch button
+
+  // Initialize all sensors
+  for (auto sensor : sensors) {
+    sensor->init();
+  }
+  // Initialize all actuators
+  for (auto actuator : actuators) {
+    actuator->init();
+  }
   
   try {
     wifi.init();         // Initializes the Wi-Fi

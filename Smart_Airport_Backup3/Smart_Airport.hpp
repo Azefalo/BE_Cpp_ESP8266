@@ -8,8 +8,6 @@
 #include "Adafruit_SHT31.h"
 #include <PubSubClient.h> // Bibliothèque MQTT
 #include <stdexcept> // Biblioteca para exceções
-#include <vector>             // Library for vectors
-
 
 void updateDisplay();
 void Inicialization();
