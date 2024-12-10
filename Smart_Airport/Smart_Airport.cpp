@@ -101,7 +101,7 @@ void ScreenManager::show (uint8_t  r , uint8_t  g , uint8_t  b,String Message1="
   lcd.print(Message1);
   lcd.setCursor(0, 1); // Ligne 0, Colonne 1
   lcd.print(Message2);
-  delay(3000);
+  delay(1000);
 }
 
 void ScreenManager::setrgb(uint8_t r , uint8_t g , uint8_t b){
@@ -190,8 +190,8 @@ void Fire_Alarm_Check(){
       alarmBuzzer.playFireAlarmPattern(200, 100, 1000);
     }
     screen.show (0,255,0,"Fire alarm","Desactivated");
+    delay(1000);
   }
-  delay(1000);
 }
 
 void Windows_Automatic_Open_Close() {
