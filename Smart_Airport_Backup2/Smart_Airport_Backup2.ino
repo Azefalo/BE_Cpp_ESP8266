@@ -39,7 +39,7 @@ void loop() {
   Fire_Alarm_Check();
   Windows_Automatic_Open_Close();
   Light_Automatic_On_Off();
- 
+  Server_Receive_Send_Data();
   Wifi_Connected_Check();
   
   //Airport_TLS.Light();

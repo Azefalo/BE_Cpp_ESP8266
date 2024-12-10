@@ -15,6 +15,7 @@ void Fire_Alarm_Check();
 void Windows_Automatic_Open_Close();
 void Light_Automatic_On_Off();
 void Airplane_In_Gate_Check();
+void Server_Receive_Send_Data();
 void Wifi_Connected_Check();
 
 class WifiManager {

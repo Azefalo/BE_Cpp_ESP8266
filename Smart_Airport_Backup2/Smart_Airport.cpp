@@ -163,9 +163,6 @@ String messageCallback(char* topic, uint8_t* payload, unsigned int length) {
 }
 
 void Fire_Alarm_Check() {
-  // Maintain the MQTT connection active and check the payload
-  mqttClient.loop(); 
-  mqttClient.publishData("data", weatherSensor.getTemperature(), weatherSensor.getHumidity(), AlarmActivated);
   if (emergencyButton.IsActivated() == true) {
     AlarmActivated = true;
     while (AlarmActivated == true) {
@@ -221,6 +218,12 @@ void Airplane_In_Gate_Check() {
       Serial.println("Airplane Left!");
     }
   }
+}
+
+void Server_Receive_Send_Data(){
+  // Maintain the MQTT connection active and check the payload
+  mqttClient.loop(); 
+  mqttClient.publishData("data", weatherSensor.getTemperature(), weatherSensor.getHumidity(), AlarmActivated);
 }
 
 void Wifi_Connected_Check() {
