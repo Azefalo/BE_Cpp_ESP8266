@@ -238,7 +238,7 @@ void Airplane_In_Gate_Check(){
       AirplaneInGate = true; // Atualiza o estado para "avião presente"
       Serial.println("Airplane Detected!");
       screen.show(0, 0, 255, "Welcome to", "Toulouse Airport");
-      delay(2000);
+      delay(3000);
     }
   } else { // Avião saiu do portão (distância fora do intervalo)
     if (AirplaneInGate) { // Avião estava presente, mas saiu
