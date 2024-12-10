@@ -8,11 +8,11 @@ extern String ATC_Message = "";
 rgb_lcd lcd; // Initialisation de l'écran Grove LCD
 Servo servoMotor;
 
-std::vector<Sensor*> sensors = {&lux, &emergencyButton, &touchButton};
-std::vector<Actuator*> actuator = {&lamp, &debugLight, &alarmBuzzer, &moteur};
+std::vector<Capteur*> sensors = {&lux, &emergencyButton, &touchButton};
+std::vector<Actuator*> actuators = {&lamp, &debugLight, &alarmBuzzer, &moteur};
 
 
-void Initialization() {
+void Inicialization() {
   screen.init();
 
   // Initialize all sensors
