@@ -1,19 +1,21 @@
-#include "credentials.hpp" // Contient les identifiants Wi-Fi et MQTT (SSID et mot de passe)
-#include "Smart_Airport.hpp" // Contient les définitions des classes et fonctions du projet
 #include "ESP8266_Pins.hpp" // Définit les broches utilisées par les capteurs et actionneurs
+#include "Smart_Airport.hpp" // Contient les définitions des classes et fonctions du projet
+#include "credentials.hpp" // Contient les identifiants Wi-Fi et MQTT (SSID et mot de passe)
 
-// Initialisation des gestionnaires nécessaires
+// Gestionnaires de réseau et communication
 WifiManager wifi(WiFi_ssid, WiFi_Password); // Gestionnaire Wi-Fi pour connecter l'ESP8266
 MqttClient mqttClient(mqttServer, mqttPort, mqttUser, mqttPassword); // Client MQTT pour la communication serveur
+
+// Gestionnaire d'écran
 ScreenManager screen(D2, D1); // Gestionnaire d'écran LCD RGB connecté aux broches I2C (D2 = SDA, D1 = SCL)
 
-// Initialisation des actionneurs avec les broches associées
+// Actionneurs
 Led lamp(LightPin); // LED principale simulant la lumière
 Led debugLight(LED_BUILTIN_AUX); // LED intégrée utilisée pour le débogage
 Buzzer alarmBuzzer(BuzzerPin); // Buzzer utilisé pour alerter en cas d'incendie
 MoteurToit moteur(MotorPin); // Servo moteur pour gérer l'ouverture/fermeture des fenêtres
 
-// Initialisation des capteurs avec leurs paramètres
+// Capteurs
 CapteurLuminosite lux(1, "Luminosity", LightSensorPin); // Capteur de luminosité connecté à une broche analogique
 Button emergencyButton(2, "Emergency Button", PushButtonPin); // Bouton d'urgence pour les alertes
 Button touchButton(3, "Lampe", TouchButtonPin); // Bouton tactile pour activer/désactiver manuellement la lampe
