@@ -12,13 +12,13 @@
 
 // Fonctions globales
 void updateDisplay(); // Met à jour l'affichage
-void Inicialization(); // Initialise les composants du système
+void Initialization(); // Initialise les composants du système
 void messageCallback(char* topic, uint8_t* payload, unsigned int length); // Gère les messages MQTT reçus
 void Fire_Alarm_Check(); // Vérifie l'état de l'alarme incendie
 void Windows_Automatic_Open_Close(); // Gère l'ouverture/fermeture automatique des fenêtres
 void Light_Automatic_On_Off(); // Gère l'activation/désactivation automatique des lumières
 void Airplane_In_Gate_Check(); // Vérifie si un avion est en position dans la porte
-void Wifi_Conected_Check(); // Vérifie si le Wi-Fi est connecté
+void Wifi_Connected_Check(); // Vérifie si le Wi-Fi est connecté
 
 // Classe pour gérer la connexion Wi-Fi
 class WifiManager {
@@ -37,8 +37,8 @@ public:
 // Classe pour gérer le capteur de température et d'humidité SHT31
 class TemperatureHumiditySensor {
 private:
-    Adafruit_SHT31 sht31; // Objet Adafruit pour le capteur SHT31
-    byte i2cAddress; // Adresse I2C du capteur
+  Adafruit_SHT31 sht31; // Objet Adafruit pour le capteur SHT31
+  byte i2cAddress; // Adresse I2C du capteur
 
 public:
   TemperatureHumiditySensor(byte address); // Constructeur
@@ -68,19 +68,19 @@ public:
 // Classe pour gérer les communications MQTT
 class MqttClient {
 private:
-    const char* server; // Adresse du serveur MQTT
-    const int port; // Port du serveur MQTT
-    const char* user; // Nom d'utilisateur MQTT
-    const char* password; // Mot de passe MQTT
-    WiFiClient wifiClient; // Client Wi-Fi
-    PubSubClient mqttClient; // Client MQTT
+  const char* server; // Adresse du serveur MQTT
+  const int port; // Port du serveur MQTT
+  const char* user; // Nom d'utilisateur MQTT
+  const char* password; // Mot de passe MQTT
+  WiFiClient wifiClient; // Client Wi-Fi
+  PubSubClient mqttClient; // Client MQTT
 
 public:
-    MqttClient(const char* server, int port, const char* user, const char* password); // Constructeur
-    void connectMQTT(); // Connexion au serveur MQTT
-    void publishData(const char* topic, float data1, float data2, bool data3); // Publie des données
-    void subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int)); // S'abonne à un topic
-    void loop(); // Boucle principale MQTT
+  MqttClient(const char* server, int port, const char* user, const char* password); // Constructeur
+  void connectMQTT(); // Connexion au serveur MQTT
+  void publishData(const char* topic, float data1, float data2, bool data3); // Publie des données
+  void subscribeData(const char* topic, void (*callback)(char*, uint8_t*, unsigned int)); // S'abonne à un topic
+  void loop(); // Boucle principale MQTT
 };
 
 // Classe de base pour les actionneurs
@@ -112,43 +112,43 @@ public:
 };
 
 // Classe pour les moteurs, dérivée d'Actuator
-class MoteurToit : public Actuator {
+class RoofMotor : public Actuator {
 private:
   int angle; // Angle actuel du moteur
 
 public:
-  MoteurToit(byte pin); // Constructeur
+  RoofMotor(byte pin); // Constructeur
   void init() override; // Initialise le moteur
   void setAngle(int angle); // Définit un angle spécifique
 };
 
 // Classe de base pour les capteurs
-class Capteur {
+class Sensor {
 protected:
   byte pin; // Broche associée
   int id; // Identifiant du capteur
   String type; // Type de capteur
 
 public:
-  Capteur(int id, String type, byte pin); // Constructeur
+  Sensor(int id, String type, byte pin); // Constructeur
   virtual void init(); // Initialise le capteur
-  virtual float mesurer(); // Mesure une valeur (polymorphisme)
-  virtual void afficherValeur(); // Affiche la valeur mesurée
+  virtual float measure(); // Mesure une valeur (polymorphisme)
+  virtual void displayValue(); // Affiche la valeur mesurée
 };
 
-// Classe pour le capteur de luminosité, dérivée de Capteur
-class CapteurLuminosite : public Capteur {
+// Classe pour le capteur de luminosité, dérivée de Sensor
+class LightSensor : public Sensor {
 private:
-  int valeurLuminosite; // Valeur mesurée de la luminosité
+  int lightValue; // Valeur mesurée de la luminosité
 
 public:
-  CapteurLuminosite(int id, String type, byte pin); // Constructeur
-  float mesurer(); // Mesure la luminosité
-  void afficherValeur(); // Affiche la valeur de la luminosité
+  LightSensor(int id, String type, byte pin); // Constructeur
+  float measure() override; // Mesure la luminosité
+  void displayValue() override; // Affiche la valeur de la luminosité
 };
 
-// Classe pour les boutons, dérivée de Capteur
-class Button : public Capteur {
+// Classe pour les boutons, dérivée de Sensor
+class Button : public Sensor {
 private:
   bool Activated; // État du bouton
 
@@ -157,8 +157,8 @@ public:
   bool IsActivated(); // Vérifie si le bouton est activé
 };
 
-// Classe pour les capteurs ultrasoniques, dérivée de Capteur
-class UltrasonicSensor : public Capteur {
+// Classe pour les capteurs ultrasoniques, dérivée de Sensor
+class UltrasonicSensor : public Sensor {
 private:
   long duration; // Durée de l'impulsion
   int distance; // Distance calculée
@@ -176,9 +176,9 @@ extern ScreenManager screen; // Gestionnaire d'écran
 extern Led lamp;
 extern Led debugLight;
 extern Buzzer alarmBuzzer;
-extern MoteurToit moteur;
+extern RoofMotor roofMotor;
 // Capteurs
-extern CapteurLuminosite lux;
+extern LightSensor luxSensor;
 extern Button emergencyButton;
 extern Button touchButton;
 extern UltrasonicSensor distanceSensor;

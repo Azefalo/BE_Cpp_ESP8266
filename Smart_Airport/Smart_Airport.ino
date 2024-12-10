@@ -11,12 +11,12 @@ ScreenManager screen(D2, D1); // Gestionnaire d'écran LCD RGB connecté aux bro
 Led lamp(LightPin); // LED principale simulant la lumière
 Led debugLight(LED_BUILTIN_AUX); // LED intégrée utilisée pour le débogage
 Buzzer alarmBuzzer(BuzzerPin); // Buzzer utilisé pour alerter en cas d'incendie
-MoteurToit moteur(MotorPin); // Servo moteur pour gérer l'ouverture/fermeture des fenêtres
+RoofMotor roofMotor(MotorPin); // Servo moteur pour gérer l'ouverture/fermeture des fenêtres
 
 // Initialisation des capteurs avec leurs paramètres
-CapteurLuminosite lux(1, "Luminosity", LightSensorPin); // Capteur de luminosité connecté à une broche analogique
+LightSensor luxSensor(1, "Luminosity", LightSensorPin); // Capteur de luminosité connecté à une broche analogique
 Button emergencyButton(2, "Emergency Button", PushButtonPin); // Bouton d'urgence pour les alertes
-Button touchButton(3, "Lampe", TouchButtonPin); // Bouton tactile pour activer/désactiver manuellement la lampe
+Button touchButton(3, "Lamp", TouchButtonPin); // Bouton tactile pour activer/désactiver manuellement la lampe
 UltrasonicSensor distanceSensor(7, "Ultrasonic", DistanceSensorPin); // Capteur ultrasonique pour détecter la distance (par exemple, avion)
 TemperatureHumiditySensor weatherSensor(0x44); // Capteur de température et d'humidité (adresse I2C par défaut 0x44)
 
@@ -25,10 +25,10 @@ void setup() {
   Serial.begin(9600); // Initialise la communication série à 9600 bauds pour le débogage
   delay(100); // Petite pause pour stabiliser les composants
 
-  Inicialization(); // Appelle la fonction globale d'initialisation (capteurs, actionneurs, Wi-Fi, MQTT, etc.)
+  Initialization(); // Appelle la fonction globale d'initialisation (capteurs, actionneurs, Wi-Fi, MQTT, etc.)
 
   // Affiche un message de confirmation d'initialisation réussie sur l'écran LCD
-  screen.show(0, 255, 0, "Inicialized with", "success!");
+  screen.show(0, 255, 0, "Initialized with", "success!");
   delay(1000); // Pause pour permettre la lecture du message avant de passer à autre chose
 }
 
@@ -42,6 +42,5 @@ void loop() {
   Windows_Automatic_Open_Close(); // Ajuste automatiquement les fenêtres en fonction de la luminosité
   Light_Automatic_On_Off(); // Allume ou éteint automatiquement la lampe selon les conditions (luminosité ou bouton tactile)
 
-  Wifi_Conected_Check(); // Vérifie si le Wi-Fi est toujours connecté et tente une reconnexion si nécessaire
-
+  Wifi_Connected_Check(); // Vérifie si le Wi-Fi est toujours connecté et tente une reconnexion si nécessaire
 }
