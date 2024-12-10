@@ -41,7 +41,4 @@ void loop() {
   Light_Automatic_On_Off();
   Server_Receive_Send_Data();
   Wifi_Connected_Check();
-  
-  //Airport_TLS.Light();
-  //Airport_TLS.Window();
 }

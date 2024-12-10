@@ -67,7 +67,7 @@ String WifiManager::getIP() {
   if (isConnected()) {
     return WiFi.localIP().toString();
   } else {
-    return "Not connected";
+    return "\nNot connected";
   }
 }
 
@@ -244,7 +244,7 @@ void Airplane_In_Gate_Check(){
     if (AirplaneInGate) { // Avião estava presente, mas saiu
       AirplaneInGate = false; // Atualiza o estado para "sem avião"
       ATC_Message = "";
-      screen.show(255, 255, 255, ATC_Message,"");
+      screen.show(255, 255, 255, ATC_Message, "");
       Serial.println("Airplane Left!");
     }
   }
