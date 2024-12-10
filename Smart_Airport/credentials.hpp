@@ -1,7 +1,7 @@
 #ifndef CREDENTIALS_HPP
 #define CREDENTIALS_HPP
 
-// Declaring the variable to access the Wi-fi
+// Déclaration de la variable pour accéder au Wi-Fi
 extern const char* WiFi_ssid;
 extern const char* WiFi_Password;
 
@@ -10,7 +10,7 @@ extern const int mqttPort;
 extern const char* mqttUser;
 extern const char* mqttPassword;
 
-// The CREDENTIALS here are hiden in other folder called credential.cpp
-// protected by the .gitignore
+// Les CREDENTIALS ici sont cachés dans un autre dossier appelé credential.cpp
+// protégé par le .gitignore
 
 #endif // CREDENTIALS_HPP

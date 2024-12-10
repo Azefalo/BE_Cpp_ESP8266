@@ -1,7 +1,6 @@
 #include "Smart_Airport.hpp"
 #include "Smart_Airport.ino.globals.h"
 #include "credentials.hpp"
-//#include "ESP8266_Pins.hpp"
 #include <Servo.h>
 
 // Variables globales

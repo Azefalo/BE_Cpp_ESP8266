@@ -1,12 +1,12 @@
 #include "credentials.hpp"
 
-// Wifi access
-const char* WiFi_ssid = "Wifizinho";      // Name of the Wi-Fi
-const char* WiFi_Password = "Senha123";    // Password of the Wi-Fi
-// MQTT access
+// Accès Wi-Fi
+const char* WiFi_ssid = "Wifizinho";      // Nom du Wi-Fi
+const char* WiFi_Password = "Senha123";   // Mot de passe du Wi-Fi
+// Accès MQTT
 const char* mqttServer = "x51fc22b.ala.dedicated.aws.emqxcloud.com";
 const int mqttPort = 1883;
 const char* mqttUser = "pierrele123";
 const char* mqttPassword = "projetairport";
 
-// IP address: 192.168.137.10
+// Adresse IP: 192.168.137.10
