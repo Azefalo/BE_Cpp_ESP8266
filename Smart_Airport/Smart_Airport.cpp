@@ -108,6 +108,10 @@ void ScreenManager::setrgb(uint8_t r , uint8_t g , uint8_t b){
   lcd.setRGB(r, g, b);
 }
 
+ScreenManager& ScreenManager::operator<<(const String& message) {
+    show(255, 255, 0, "     Update     ", message); // Exibe a mensagem na linha 1
+    return *this;
+}
 
 // Implémentation de MqttClient
 MqttClient::MqttClient(const char* server, int port, const char* user, const char* password)
@@ -169,7 +173,7 @@ void messageCallback(char* topic, uint8_t* payload, unsigned int length) {
         AlarmActivated = false;
     } else{
       ATC_Message=receivedMessage;
-      screen.show(255, 255, 0, "     Update     ", receivedMessage);
+      screen << receivedMessage;
     }
 }
 void Fire_Alarm_Check(){

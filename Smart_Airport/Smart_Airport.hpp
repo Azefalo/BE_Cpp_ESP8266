@@ -81,6 +81,7 @@ public :
   void setrgb(uint8_t r, uint8_t g, uint8_t b);
   void show(uint8_t r , uint8_t g , uint8_t b,String Message1,String Message2);
   void init();
+  ScreenManager& operator<<(const String& message);
 };
 
 // Classe pour gérer MQTT
