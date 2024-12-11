@@ -1,6 +1,6 @@
 # BE_Cpp_ESP8266 - Smart Airport
 
-![Aeroporto Inteligente](Smart_Airport/Archives/AI_Airport.png)
+![Aeroporto Inteligente](Archives/AI_Airport.png)
 
 ## Smart Airport Project
 
