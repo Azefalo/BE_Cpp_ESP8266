@@ -6,7 +6,7 @@ const int servoPin = D3;
 int angle = 0;       // Angle initial
 int step = 10;       // Incrément de l'angle
 
-MoteurToit Moteur(D5);
+MoteurToit Moteur(D6);
 void setup() {
   Moteur.init();
   
